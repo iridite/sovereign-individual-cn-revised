@@ -1,19 +1,6 @@
-# ignore ALL .log files
-*.log
-
-# ignore ALL files in ANY directory named temp
-temp/
-
-# ignore TeX files
-*.aux
-*.toc
-*.gz
-*.out
-*.fle
-*.fls
-*.fdb_latexmk
-*.DS_Store
-__pycache__/
-*.pyc
 dist/
 .work/
+__pycache__/
+*.pyc
+*.log
+.DS_Store
