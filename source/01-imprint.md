@@ -4,7 +4,7 @@
 <div class="imprint-block">
 <p class="imprint-line">书名：主权个人</p>
 <p class="imprint-line">作者：James Dale Davidson，Lord William Rees-Mogg</p>
-<p class="imprint-line">译者：陈三省</p>
+<p class="imprint-line">译者：陈三省；二次校正：iridite</p>
 <p class="imprint-line">出版信息：筷子小手出版社，2025.09</p>
 <p class="imprint-line">丛书：加密未来系列丛书</p>
 <p class="imprint-line">ISBN：978-80-7340-097-2</p>
@@ -13,9 +13,7 @@
 
 <div class="imprint-block">
 <p class="imprint-line">原书版本：1997 年第一版，2020 年第二版</p>
-<p class="imprint-line">当前版本：基于开源 LaTeX 源稿与逐章审校台账整理的修订版电子书</p>
-<p class="imprint-line">版本口径：正文精修版；保留正式前置页、后记与两份附录</p>
-<p class="imprint-line">本版在陈三省译稿基础上经二次复校修订：iridite</p>
+<p class="imprint-line">本版基于开源 LaTeX 源稿整理，并在陈三省译稿基础上经 iridite 二次校正。</p>
 <p class="imprint-line">使用说明：仅供个人阅读与学习交流使用，请勿商用</p>
 </div>
 
@@ -24,6 +22,6 @@
 <p class="imprint-line">责任校对：李不乖</p>
 <p class="imprint-line">责任印刷：筷子小手</p>
 <p class="imprint-line">封面设计：烟云幻梦</p>
-<p class="imprint-line">仓库地址：github.com/Macin20/sovereign-individual-cn</p>
+<p class="imprint-line">仓库地址：github.com/iridite/sovereign-individual-cn-revised</p>
 </div>
 </div>
