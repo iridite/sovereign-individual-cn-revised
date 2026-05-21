@@ -1,0 +1,516 @@
+{
+  "book": {
+    "title": "主权个人",
+    "subtitle": "the Sovereign Individual",
+    "edition": "1997年初版 2020年再版",
+    "pressname": "Springer",
+    "source_entrypoint": "tex-zh/main.tex"
+  },
+  "source_families": [
+    {
+      "name": "primary_tex",
+      "description": "Authoritative Chinese LaTeX composition used by tex-zh/main.tex",
+      "root": "tex-zh/maincontents"
+    },
+    {
+      "name": "secondary_md",
+      "description": "Markdown mirror / auxiliary text set; useful for cross-checking but not used as the canonical source here",
+      "root": "tex-zh/md-files"
+    }
+  ],
+  "secondary_inventory": [
+    {
+      "path": "tex-zh/md-files/cpt1.md",
+      "line_count": 645,
+      "html_tag_count": 30,
+      "status": "maps_to_chapter1"
+    },
+    {
+      "path": "tex-zh/md-files/cpt10.md",
+      "line_count": 317,
+      "html_tag_count": 3,
+      "status": "maps_to_chapter10"
+    },
+    {
+      "path": "tex-zh/md-files/cpt11.md",
+      "line_count": 347,
+      "html_tag_count": 3,
+      "status": "maps_to_chapter11"
+    },
+    {
+      "path": "tex-zh/md-files/cpt2.md",
+      "line_count": 244,
+      "html_tag_count": 11,
+      "status": "maps_to_chapter2"
+    },
+    {
+      "path": "tex-zh/md-files/cpt3.md",
+      "line_count": 209,
+      "html_tag_count": 6,
+      "status": "maps_to_chapter3"
+    },
+    {
+      "path": "tex-zh/md-files/cpt4.md",
+      "line_count": 342,
+      "html_tag_count": 19,
+      "status": "maps_to_chapter4"
+    },
+    {
+      "path": "tex-zh/md-files/cpt5.md",
+      "line_count": 285,
+      "html_tag_count": 21,
+      "status": "maps_to_chapter5"
+    },
+    {
+      "path": "tex-zh/md-files/cpt6.md",
+      "line_count": 439,
+      "html_tag_count": 33,
+      "status": "maps_to_chapter6"
+    },
+    {
+      "path": "tex-zh/md-files/cpt7.md",
+      "line_count": 302,
+      "html_tag_count": 12,
+      "status": "maps_to_chapter7"
+    },
+    {
+      "path": "tex-zh/md-files/cpt8.md",
+      "line_count": 334,
+      "html_tag_count": 14,
+      "status": "maps_to_chapter8"
+    },
+    {
+      "path": "tex-zh/md-files/cpt9.md",
+      "line_count": 618,
+      "html_tag_count": 12,
+      "status": "maps_to_chapter9"
+    },
+    {
+      "path": "tex-zh/md-files/end1.md",
+      "line_count": 42,
+      "html_tag_count": 3,
+      "status": "maps_to_afterword"
+    },
+    {
+      "path": "tex-zh/md-files/end2.md",
+      "line_count": 8,
+      "html_tag_count": 0,
+      "status": "auxiliary_only_or_variant"
+    },
+    {
+      "path": "tex-zh/md-files/end3.md",
+      "line_count": 62,
+      "html_tag_count": 0,
+      "status": "maps_to_appendix"
+    },
+    {
+      "path": "tex-zh/md-files/end4.md",
+      "line_count": 49,
+      "html_tag_count": 3,
+      "status": "maps_to_appendix2"
+    },
+    {
+      "path": "tex-zh/md-files/README.md",
+      "line_count": 26,
+      "html_tag_count": 3,
+      "status": "auxiliary_only_or_variant"
+    },
+    {
+      "path": "tex-zh/md-files/原书评.md",
+      "line_count": 152,
+      "html_tag_count": 5,
+      "status": "auxiliary_only_or_variant"
+    },
+    {
+      "path": "tex-zh/md-files/新版序言.md",
+      "line_count": 30,
+      "html_tag_count": 1,
+      "status": "maps_to_preface"
+    },
+    {
+      "path": "tex-zh/md-files/译者序.md",
+      "line_count": 16,
+      "html_tag_count": 1,
+      "status": "maps_to_preface2"
+    }
+  ],
+  "sections": [
+    {
+      "order": 1,
+      "slug": "01-preface",
+      "kind": "frontmatter",
+      "title": "前言",
+      "short_title": null,
+      "source_path": "tex-zh/maincontents/preface.tex",
+      "output_path": "derived/clean-source/primary/01-preface.md",
+      "heading_count": {
+        "chapter": 1,
+        "section": 0,
+        "subsection": 0
+      },
+      "paragraph_count": 8,
+      "blockquote_count": 0,
+      "list_count": 0,
+      "footnote_count": 0,
+      "emphasis_count": {
+        "strong": 0,
+        "emphasis": 0
+      },
+      "source_family": "primary_tex"
+    },
+    {
+      "order": 2,
+      "slug": "02-preface2",
+      "kind": "frontmatter",
+      "title": "译者序",
+      "short_title": null,
+      "source_path": "tex-zh/maincontents/preface2.tex",
+      "output_path": "derived/clean-source/primary/02-preface2.md",
+      "heading_count": {
+        "chapter": 1,
+        "section": 0,
+        "subsection": 0
+      },
+      "paragraph_count": 7,
+      "blockquote_count": 0,
+      "list_count": 0,
+      "footnote_count": 1,
+      "emphasis_count": {
+        "strong": 0,
+        "emphasis": 0
+      },
+      "source_family": "primary_tex"
+    },
+    {
+      "order": 3,
+      "slug": "03-chapter1",
+      "kind": "chapter",
+      "title": "公元2000年转折点： 人类社会的第四个阶段",
+      "short_title": "公元2000年转折点",
+      "source_path": "tex-zh/maincontents/chapter1.tex",
+      "output_path": "derived/clean-source/primary/03-chapter1.md",
+      "heading_count": {
+        "chapter": 1,
+        "section": 10,
+        "subsection": 19
+      },
+      "paragraph_count": 155,
+      "blockquote_count": 10,
+      "list_count": 3,
+      "footnote_count": 27,
+      "emphasis_count": {
+        "strong": 8,
+        "emphasis": 0
+      },
+      "source_family": "primary_tex"
+    },
+    {
+      "order": 4,
+      "slug": "04-chapter2",
+      "kind": "chapter",
+      "title": "历史视野下的大政治变革",
+      "short_title": "大政治变革",
+      "source_path": "tex-zh/maincontents/chapter2.tex",
+      "output_path": "derived/clean-source/primary/04-chapter2.md",
+      "heading_count": {
+        "chapter": 1,
+        "section": 4,
+        "subsection": 10
+      },
+      "paragraph_count": 83,
+      "blockquote_count": 4,
+      "list_count": 2,
+      "footnote_count": 7,
+      "emphasis_count": {
+        "strong": 7,
+        "emphasis": 0
+      },
+      "source_family": "primary_tex"
+    },
+    {
+      "order": 5,
+      "slug": "05-chapter3",
+      "kind": "chapter",
+      "title": "伊甸园之东： 农业革命与暴力的复杂性",
+      "short_title": "伊甸园之东",
+      "source_path": "tex-zh/maincontents/chapter3.tex",
+      "output_path": "derived/clean-source/primary/05-chapter3.md",
+      "heading_count": {
+        "chapter": 1,
+        "section": 3,
+        "subsection": 7
+      },
+      "paragraph_count": 84,
+      "blockquote_count": 2,
+      "list_count": 1,
+      "footnote_count": 7,
+      "emphasis_count": {
+        "strong": 4,
+        "emphasis": 0
+      },
+      "source_family": "primary_tex"
+    },
+    {
+      "order": 6,
+      "slug": "06-chapter4",
+      "kind": "chapter",
+      "title": "政治最后的日子： 圣母教会与保姆国家衰落的相似性",
+      "short_title": "政治最后的日子",
+      "source_path": "tex-zh/maincontents/chapter4.tex",
+      "output_path": "derived/clean-source/primary/06-chapter4.md",
+      "heading_count": {
+        "chapter": 1,
+        "section": 9,
+        "subsection": 29
+      },
+      "paragraph_count": 113,
+      "blockquote_count": 8,
+      "list_count": 2,
+      "footnote_count": 8,
+      "emphasis_count": {
+        "strong": 6,
+        "emphasis": 0
+      },
+      "source_family": "primary_tex"
+    },
+    {
+      "order": 7,
+      "slug": "07-chapter5",
+      "kind": "chapter",
+      "title": "民族国家的生与死： 民主与民族主义作为暴力时代的财政策略",
+      "short_title": "民族国家的生与死",
+      "source_path": "tex-zh/maincontents/chapter5.tex",
+      "output_path": "derived/clean-source/primary/07-chapter5.md",
+      "heading_count": {
+        "chapter": 1,
+        "section": 4,
+        "subsection": 15
+      },
+      "paragraph_count": 101,
+      "blockquote_count": 8,
+      "list_count": 1,
+      "footnote_count": 6,
+      "emphasis_count": {
+        "strong": 7,
+        "emphasis": 0
+      },
+      "source_family": "primary_tex"
+    },
+    {
+      "order": 8,
+      "slug": "08-chapter6",
+      "kind": "chapter",
+      "title": "信息时代的大政治分析： 效率胜过权力",
+      "short_title": "信息时代的大政治分析",
+      "source_path": "tex-zh/maincontents/chapter6.tex",
+      "output_path": "derived/clean-source/primary/08-chapter6.md",
+      "heading_count": {
+        "chapter": 1,
+        "section": 8,
+        "subsection": 29
+      },
+      "paragraph_count": 154,
+      "blockquote_count": 13,
+      "list_count": 0,
+      "footnote_count": 8,
+      "emphasis_count": {
+        "strong": 4,
+        "emphasis": 0
+      },
+      "source_family": "primary_tex"
+    },
+    {
+      "order": 9,
+      "slug": "09-chapter7",
+      "kind": "chapter",
+      "title": "超越地域局限：网络经济的兴起",
+      "short_title": "超越地域局限",
+      "source_path": "tex-zh/maincontents/chapter7.tex",
+      "output_path": "derived/clean-source/primary/09-chapter7.md",
+      "heading_count": {
+        "chapter": 1,
+        "section": 10,
+        "subsection": 34
+      },
+      "paragraph_count": 103,
+      "blockquote_count": 6,
+      "list_count": 1,
+      "footnote_count": 3,
+      "emphasis_count": {
+        "strong": 2,
+        "emphasis": 0
+      },
+      "source_family": "primary_tex"
+    },
+    {
+      "order": 10,
+      "slug": "10-chapter8",
+      "kind": "chapter",
+      "title": "平等主义经济学的终结： 无工作世界里的致富革命",
+      "short_title": "平等主义经济学的终结",
+      "source_path": "tex-zh/maincontents/chapter8.tex",
+      "output_path": "derived/clean-source/primary/10-chapter8.md",
+      "heading_count": {
+        "chapter": 1,
+        "section": 8,
+        "subsection": 29
+      },
+      "paragraph_count": 120,
+      "blockquote_count": 11,
+      "list_count": 1,
+      "footnote_count": 4,
+      "emphasis_count": {
+        "strong": 2,
+        "emphasis": 0
+      },
+      "source_family": "primary_tex"
+    },
+    {
+      "order": 11,
+      "slug": "11-chapter9",
+      "kind": "chapter",
+      "title": "民族主义、反动与新卢德分子",
+      "short_title": null,
+      "source_path": "tex-zh/maincontents/chapter9.tex",
+      "output_path": "derived/clean-source/primary/11-chapter9.md",
+      "heading_count": {
+        "chapter": 1,
+        "section": 19,
+        "subsection": 36
+      },
+      "paragraph_count": 239,
+      "blockquote_count": 15,
+      "list_count": 4,
+      "footnote_count": 29,
+      "emphasis_count": {
+        "strong": 0,
+        "emphasis": 0
+      },
+      "source_family": "primary_tex"
+    },
+    {
+      "order": 12,
+      "slug": "12-chapter10",
+      "kind": "chapter",
+      "title": "民主制度的黄昏",
+      "short_title": null,
+      "source_path": "tex-zh/maincontents/chapter10.tex",
+      "output_path": "derived/clean-source/primary/12-chapter10.md",
+      "heading_count": {
+        "chapter": 1,
+        "section": 5,
+        "subsection": 27
+      },
+      "paragraph_count": 123,
+      "blockquote_count": 5,
+      "list_count": 1,
+      "footnote_count": 5,
+      "emphasis_count": {
+        "strong": 1,
+        "emphasis": 0
+      },
+      "source_family": "primary_tex"
+    },
+    {
+      "order": 13,
+      "slug": "13-chapter11",
+      "kind": "chapter",
+      "title": "信息时代“自然经济”中的 道德与犯罪",
+      "short_title": "信息时代的道德与犯罪",
+      "source_path": "tex-zh/maincontents/chapter11.tex",
+      "output_path": "derived/clean-source/primary/13-chapter11.md",
+      "heading_count": {
+        "chapter": 1,
+        "section": 3,
+        "subsection": 15
+      },
+      "paragraph_count": 149,
+      "blockquote_count": 5,
+      "list_count": 0,
+      "footnote_count": 9,
+      "emphasis_count": {
+        "strong": 3,
+        "emphasis": 0
+      },
+      "source_family": "primary_tex"
+    },
+    {
+      "order": 14,
+      "slug": "14-afterword",
+      "kind": "backmatter",
+      "title": "后记：权力分解与边际收益递减",
+      "short_title": null,
+      "source_path": "tex-zh/maincontents/afterword.tex",
+      "output_path": "derived/clean-source/primary/14-afterword.md",
+      "heading_count": {
+        "chapter": 1,
+        "section": 0,
+        "subsection": 0
+      },
+      "paragraph_count": 17,
+      "blockquote_count": 3,
+      "list_count": 0,
+      "footnote_count": 1,
+      "emphasis_count": {
+        "strong": 0,
+        "emphasis": 0
+      },
+      "source_family": "primary_tex"
+    },
+    {
+      "order": 15,
+      "slug": "15-appendix",
+      "kind": "backmatter",
+      "title": "附录1：影响和战略",
+      "short_title": null,
+      "source_path": "tex-zh/maincontents/appendix.tex",
+      "output_path": "derived/clean-source/primary/15-appendix.md",
+      "heading_count": {
+        "chapter": 1,
+        "section": 0,
+        "subsection": 0
+      },
+      "paragraph_count": 1,
+      "blockquote_count": 0,
+      "list_count": 1,
+      "footnote_count": 0,
+      "emphasis_count": {
+        "strong": 0,
+        "emphasis": 0
+      },
+      "source_family": "primary_tex"
+    },
+    {
+      "order": 16,
+      "slug": "16-appendix2",
+      "kind": "backmatter",
+      "title": "附录2：实现财务独立的资源推荐",
+      "short_title": null,
+      "source_path": "tex-zh/maincontents/appendix2.tex",
+      "output_path": "derived/clean-source/primary/16-appendix2.md",
+      "heading_count": {
+        "chapter": 1,
+        "section": 0,
+        "subsection": 0
+      },
+      "paragraph_count": 10,
+      "blockquote_count": 0,
+      "list_count": 0,
+      "footnote_count": 0,
+      "emphasis_count": {
+        "strong": 0,
+        "emphasis": 0
+      },
+      "source_family": "primary_tex"
+    }
+  ],
+  "totals": {
+    "section_count": 16,
+    "footnote_count": 115,
+    "blockquote_count": 90,
+    "list_count": 17,
+    "paragraph_count": 1467,
+    "strong_count": 44,
+    "emphasis_count": 0
+  }
+}

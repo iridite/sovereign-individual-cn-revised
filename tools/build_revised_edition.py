@@ -166,7 +166,7 @@ METADATA_TEXT = dedent(
     """
 )
 
-STYLE_TEXT = (ROOT / "epub" / "style.css").read_text(encoding="utf-8")
+STYLE_TEXT = (ROOT / "templates" / "epub" / "style.css").read_text(encoding="utf-8")
 
 TEXT_REPLACEMENTS: dict[str, list[tuple[str, str]]] = {
     "01-preface.md": [

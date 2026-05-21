@@ -1,34 +1,61 @@
-# sovereign-individual-cn
+# sovereign-individual-cn-revised
 
-## 介绍
-从2023年5月开始这本书就一直躺在我的待阅清单中，但是一直没有遇到很好的契机启动这个事情，本想着直接读英文版，读了第一章就进行不下去了。后来想想，既然这本书在加密世界影响这么大，还是应该有一个正式的中文版，才更有意义。于是就萌生了翻译的念头。
+基于 [Macin20/sovereign-individual-cn](https://github.com/Macin20/sovereign-individual-cn) 的本地修订版工作仓库。当前仓库重点不再是单纯保留原始 LaTeX 排版，而是围绕以下三条主线组织：
 
-2023年 GhatGPT 和其他 AI 翻译工具已经非常成熟了，能大大提高翻译效率，所以我就决定用 AI 辅助翻译的方式来完成这个任务。结合网络上已开源的翻译文本（参看链接：[github.com](https://github.com/lj92458/the_sovereign_individual)），我重新设计了书籍封面和排版样式，差不多用了一个月的时间完成了初稿。
+- 保留中文 LaTeX 主源 `tex-zh`
+- 保留逐章审校、清洗与修订成果 `derived`
+- 产出适合微信读书导入的中文修订版 EPUB
 
-《主权个人》写作于 1990 年代中期，首次出版于 1996 年，距今整整四分之一个世纪。2020 年该书进行了再版，本中文版本翻译自 2020 年最新版本。
+## 当前仓库内容
 
-这本书在西方被认为是“加密世界的圣经”，它深刻影响了或影响着科技精英和加密一代。可以看到，很多人在以“主权个人”中的逻辑创造和生活，在以“主权个人”中的观念思考和表达。但它的意义并非仅止于此，事实上，加密货币的内容在全书中只占不到十分之一。
+- `books/original`
+  - 原版英文参考书文件。目前保留英文 PDF 作为来源参考。
+- `tex-zh`
+  - 中文 LaTeX 主源、版式资源、PDF 版本与中间 Markdown 镜像。
+- `derived/clean-source`
+  - 从中文 LaTeX 抽取并清洗出的干净正文源。
+- `derived/translation-review`
+  - 全书中英对照审校记录与问题台账。
+- `derived/revised-edition`
+  - 当前最终工作主线：修订版源文件、术语表、终检报告、构建输出。
+- `templates/epub`
+  - 旧版 EPUB 构建所用的模板资源，包括样式、元数据、书名页和版权页模板。
+- `tools`
+  - Python 构建脚本与抽取脚本。
+- `tools/scripts`
+  - PowerShell 入口脚本，便于在 Windows 本地直接重建产物。
 
-校完全书后我认为《主权个人》算不上严格的学术著作，很多地方的表述有失偏颇，预计很多中文读者会感觉不舒服，甚至受到了冒犯。但我觉得这正是它的价值所在。它提供了一种全新的视角和思考框架，去理解和分析当今世界的变迁。为什么现在全球的债务问题如此突出？为什么通货膨胀如此严重？为什么特朗普的第二个任期要不遗余力推动美国成为加密金融中心？为什么比特币已经突破10万美元一枚？比特币会不会真的如预测一样涨到100万美元一枚？这些问题的答案都可以在《主权个人》中找到线索。
+## 当前产物
 
-译文中肯定还有大量纰漏和错误，请大家理解。如果您会使用Github，欢迎向我提交修正意见，本中文译本将全部开源 LaTeX 代码（仓库地址：[github.com/macin20/](https://github.com/Macin20/sovereign-individual-cn) ），并持续修订。如果您有任何问题，欢迎邮件交流：[kotadiving](mailto:kotadiving@gmail.com)。
+修订版终稿当前位于：
 
+- `derived/revised-edition/build/output/主权个人-修订版.epub`
+
+已冻结的 Git 节点：
+
+- `v1-baseline`
+  - 终修前稳定基线
+- `v1-final`
+  - 终稿验收通过后的冻结版本
+
+## 本地构建入口
+
+Windows 下可直接使用：
+
+- `tools/scripts/build_revised_edition.ps1`
+  - 生成修订版 EPUB
+- `tools/scripts/build_epub.ps1`
+  - 生成较早的基础 EPUB 管线产物
+
+对应 Python 脚本：
+
+- `tools/build_revised_edition.py`
+- `tools/build_epub.py`
+- `tools/extract_clean_source.py`
 
 ## 说明
-1. **注意，本项目仅供学习交流使用，未获得原著版权，请勿商用。**
-2. 源代码使用 xelatex 编译，首次需要编译两次。代码未在windows平台测试。
-3. `tex-en-zh` 文件夹中为未完工的中英双语双栏版，只能以后再弄了。
-4. `tex-zh` 文件夹中为中文版，未删减，可下载pdf后直接用A4纸打印。
-5. 欢迎Star本仓库，谢谢。
 
-## 下载地址
-[主权个人_中文版_Sovereign_Individual_V2.pdf](https://github.com/Macin20/sovereign-individual-cn/releases/download/2.0/Sovereign_Individual_V2.pdf)
-
-
-## 书稿截图
-
-![](https://macinorg-blog.oss-cn-chengdu.aliyuncs.com/blog/Screenshot2025-09-28at02.29.21.webp)
-
-![](https://macinorg-blog.oss-cn-chengdu.aliyuncs.com/blog/Screenshot2025-09-28at02.26.45.webp)
-
-![](https://macinorg-blog.oss-cn-chengdu.aliyuncs.com/blog/Screenshot2025-09-28at02.28.31.webp)
+1. 本仓库保留了原项目中文 LaTeX 主源，但已经移除了未进入当前工作流的中英双语试验目录和零散 TXT 对照稿。
+2. `derived/revised-edition` 是当前应优先查看和继续维护的主目录。
+3. `derived/translation-review` 保留了完整的逐章审校过程，适合作为修订依据和 fork 后的公开报告基础。
+4. 本项目仅供学习、研究与个人阅读使用，请勿商用。
