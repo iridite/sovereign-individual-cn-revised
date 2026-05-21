@@ -3,7 +3,7 @@
   <opf:metadata>
     <dc:identifier id="epub-id-1">sovereign-individual-cn-revised</dc:identifier>
     <dc:title id="epub-title-1">主权个人</dc:title>
-    <dc:date id="epub-date">2026-05-21T10:14:24Z</dc:date>
+    <dc:date id="epub-date">2026-05-21T10:54:52Z</dc:date>
     <dc:language>zh-CN</dc:language>
     <dc:creator id="epub-creator-1">James Dale Davidson / Lord William Rees-Mogg</dc:creator>
     <opf:meta refines="#epub-creator-1" property="role" scheme="marc:relators">aut</opf:meta>
@@ -11,7 +11,7 @@
     <dc:publisher>Springer</dc:publisher>
     <dc:rights>仅供学习交流使用，请勿商用。</dc:rights>
     <opf:meta name="cover" content="file0_png" />
-    <opf:meta property="dcterms:modified">2026-05-21T10:14:24Z</opf:meta>
+    <opf:meta property="dcterms:modified">2026-05-21T10:54:52Z</opf:meta>
     <opf:meta property="schema:accessMode">textual</opf:meta>
     <opf:meta property="schema:accessModeSufficient">textual</opf:meta>
     <opf:meta property="schema:accessibilityFeature">alternativeText</opf:meta>

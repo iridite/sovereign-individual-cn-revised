@@ -14,7 +14,8 @@
 <div class="imprint-block">
 <p class="imprint-line">原书版本：1997 年第一版，2020 年第二版</p>
 <p class="imprint-line">当前版本：基于开源 LaTeX 源稿与逐章审校台账整理的修订版电子书</p>
-<p class="imprint-line">版本口径：扩展整理版；主书与补充材料分区编排</p>
+<p class="imprint-line">版本口径：正文精修版；保留正式前置页、后记与两份附录</p>
+<p class="imprint-line">本版在陈三省译稿基础上经二次复校修订：iridite</p>
 <p class="imprint-line">使用说明：仅供个人阅读与学习交流使用，请勿商用</p>
 </div>
 

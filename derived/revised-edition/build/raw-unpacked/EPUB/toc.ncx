@@ -607,15 +607,15 @@
     </ns0:navPoint>
     <ns0:navPoint id="navPoint-100">
       <ns0:navLabel>
-        <ns0:text>附录一</ns0:text>
+        <ns0:text>附录一：影响和战略</ns0:text>
       </ns0:navLabel>
-      <ns0:content src="text/ch017.xhtml#附录一" />
+      <ns0:content src="text/ch017.xhtml#附录一影响和战略" />
     </ns0:navPoint>
     <ns0:navPoint id="navPoint-101">
       <ns0:navLabel>
-        <ns0:text>附录二</ns0:text>
+        <ns0:text>附录二：实现财务独立的资源推荐</ns0:text>
       </ns0:navLabel>
-      <ns0:content src="text/ch018.xhtml#附录二" />
+      <ns0:content src="text/ch018.xhtml#附录二实现财务独立的资源推荐" />
     </ns0:navPoint>
   </ns0:navMap>
 </ns0:ncx>
