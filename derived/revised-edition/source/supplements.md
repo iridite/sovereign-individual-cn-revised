@@ -35,6 +35,11 @@
 - 处理方式：`delete`
 - 原因：2025 年 RWA 行业补注，非原书内容。
 
+## 11-chapter9.md · 11-chapter9-fn-21
+
+- 处理方式：`delete`
+- 原因：按现值换算的现代补注，时效性过强。
+
 ## 11-chapter9.md · 11-chapter9-fn-22
 
 - 处理方式：`delete`
