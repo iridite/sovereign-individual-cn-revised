@@ -12,14 +12,15 @@ import fitz
 
 
 ROOT = Path(__file__).resolve().parents[1]
-SOURCE_ROOT = ROOT / "derived" / "clean-source" / "primary"
+SOURCE_ROOT = ROOT / "source" / "clean" / "primary"
 EPUB_ROOT = ROOT / "templates" / "epub"
-BUILD_ROOT = ROOT / "derived" / "epub-build"
-STAGING_ROOT = BUILD_ROOT / "staging"
-ASSET_ROOT = BUILD_ROOT / "assets"
+BUILD_ROOT = ROOT / "build" / "legacy-epub"
 OUTPUT_ROOT = BUILD_ROOT / "output"
 REPORT_ROOT = BUILD_ROOT / "reports"
-RAW_UNPACKED_ROOT = BUILD_ROOT / "raw-unpacked"
+WORK_ROOT = BUILD_ROOT / "_work"
+STAGING_ROOT = WORK_ROOT / "staging"
+ASSET_ROOT = WORK_ROOT / "assets"
+RAW_UNPACKED_ROOT = WORK_ROOT / "raw-unpacked"
 
 TITLEPAGE_SOURCE = EPUB_ROOT / "titlepage.md"
 IMPRINT_SOURCE = EPUB_ROOT / "imprint.md"
@@ -65,10 +66,11 @@ def reset_dir(path: Path) -> None:
 
 def ensure_dirs() -> None:
     BUILD_ROOT.mkdir(parents=True, exist_ok=True)
-    reset_dir(STAGING_ROOT)
-    reset_dir(ASSET_ROOT)
     reset_dir(OUTPUT_ROOT)
     reset_dir(REPORT_ROOT)
+    reset_dir(WORK_ROOT)
+    reset_dir(STAGING_ROOT)
+    reset_dir(ASSET_ROOT)
     reset_dir(RAW_UNPACKED_ROOT)
 
 

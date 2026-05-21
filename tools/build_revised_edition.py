@@ -13,18 +13,18 @@ import fitz
 
 
 ROOT = Path(__file__).resolve().parents[1]
-LEGACY_SOURCE_ROOT = ROOT / "derived" / "clean-source" / "primary"
-REVISED_ROOT = ROOT / "derived" / "revised-edition"
-SOURCE_ROOT = REVISED_ROOT / "source"
+LEGACY_SOURCE_ROOT = ROOT / "source" / "clean" / "primary"
+SOURCE_ROOT = ROOT / "source" / "revised"
 MAIN_ROOT = SOURCE_ROOT / "main"
 SUPPLEMENT_ROOT = SOURCE_ROOT / "supplements"
-REVIEW_ROOT = REVISED_ROOT / "review"
-BUILD_ROOT = REVISED_ROOT / "build"
-STAGING_ROOT = BUILD_ROOT / "staging"
-ASSET_ROOT = BUILD_ROOT / "assets"
+REVIEW_ROOT = ROOT / "review" / "revised"
+BUILD_ROOT = ROOT / "build" / "revised"
 OUTPUT_ROOT = BUILD_ROOT / "output"
 REPORT_ROOT = BUILD_ROOT / "reports"
-RAW_UNPACKED_ROOT = BUILD_ROOT / "raw-unpacked"
+WORK_ROOT = BUILD_ROOT / "_work"
+STAGING_ROOT = WORK_ROOT / "staging"
+ASSET_ROOT = WORK_ROOT / "assets"
+RAW_UNPACKED_ROOT = WORK_ROOT / "raw-unpacked"
 
 PDF_COVER_SOURCE = ROOT / "tex-zh" / "versions" / "Sovereign_Individual_V2.pdf"
 ALT_COVER_SOURCE = Path(r"C:\Users\ollama\Downloads\the-sovereign-individual-9781797103389_hr.jpg")
@@ -1015,12 +1015,15 @@ def reset_dir(path: Path) -> None:
 
 
 def ensure_dirs() -> None:
-    REVISED_ROOT.mkdir(parents=True, exist_ok=True)
+    SOURCE_ROOT.parent.mkdir(parents=True, exist_ok=True)
+    REVIEW_ROOT.parent.mkdir(parents=True, exist_ok=True)
+    BUILD_ROOT.parent.mkdir(parents=True, exist_ok=True)
     reset_dir(SOURCE_ROOT)
     reset_dir(MAIN_ROOT)
     reset_dir(SUPPLEMENT_ROOT)
     reset_dir(REVIEW_ROOT)
-    reset_dir(BUILD_ROOT)
+    BUILD_ROOT.mkdir(parents=True, exist_ok=True)
+    reset_dir(WORK_ROOT)
     reset_dir(STAGING_ROOT)
     reset_dir(ASSET_ROOT)
     reset_dir(OUTPUT_ROOT)
@@ -1209,7 +1212,7 @@ def write_review_docs() -> None:
         """\
         # 修订版审校说明
 
-        本目录说明 `derived/revised-edition` 的版本边界与审校关闭口径。
+        本目录说明 `review/revised` 中记录的版本边界与审校关闭口径。
 
         当前版本为“正文精修版”：
 

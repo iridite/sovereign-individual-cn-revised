@@ -10,7 +10,7 @@ from typing import Iterable
 ROOT = Path(__file__).resolve().parents[1]
 TEX_ROOT = ROOT / "tex-zh"
 MAINCONTENTS_ROOT = TEX_ROOT / "maincontents"
-OUTPUT_ROOT = ROOT / "derived" / "clean-source"
+OUTPUT_ROOT = ROOT / "source" / "clean"
 PRIMARY_OUTPUT_ROOT = OUTPUT_ROOT / "primary"
 
 

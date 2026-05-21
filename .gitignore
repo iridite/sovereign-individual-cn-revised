@@ -15,4 +15,5 @@ temp/
 *.DS_Store
 __pycache__/
 *.pyc
-derived/epub-build/
+build/legacy-epub/
+build/revised/_work/
