@@ -642,6 +642,63 @@ FOOTNOTE_ACTIONS: dict[str, dict[str, dict[str, str]]] = {
             "reason": "移除裸链接，保留中性说明。",
             "replacement": "译注：此处所引论文可在 JSTOR 检索到原文。",
         },
+        "03-chapter1-fn-18": {
+            "action": "rewrite",
+            "reason": "压缩为必要人物说明，移除冗长生平细节。",
+            "replacement": "译注：莫妮卡·莱温斯基（Monica Lewinsky）曾因与克林顿有关的政治丑闻而广为人知。",
+        },
+        "03-chapter1-fn-19": {
+            "action": "rewrite",
+            "reason": "压缩为必要作品说明。",
+            "replacement": "译注：The Skin of Our Teeth 是一部以人类文明反复受创又再度延续为主题的戏剧。",
+        },
+        "03-chapter1-fn-20": {
+            "action": "rewrite",
+            "reason": "压缩为必要术语说明，移除教科书式背景介绍。",
+            "replacement": "译注：COBOL 是一种长期用于商业数据处理的编程语言。",
+        },
+        "03-chapter1-fn-22": {
+            "action": "rewrite",
+            "reason": "压缩为必要人物说明，移除冗长生平细节。",
+            "replacement": "译注：菲奥雷的约阿希姆（Joachim of Fiore）是中世纪末以末世论和历史分期思想著称的宗教思想家。",
+        },
+        "03-chapter1-fn-26": {
+            "action": "rewrite",
+            "reason": "压缩为必要术语说明。",
+            "replacement": "译注：strange attractor，通常译作“奇异吸引子”，是非线性动力学中的概念。",
+        },
+    },
+    "04-chapter2.md": {
+        "04-chapter2-fn-1": {
+            "action": "rewrite",
+            "reason": "压缩为必要人物说明，移除履历细节。",
+            "replacement": "译注：沃尔夫·布利策（Wolf Blitzer）是美国资深电视新闻主持人。",
+        },
+        "04-chapter2-fn-2": {
+            "action": "rewrite",
+            "reason": "压缩为必要人物说明。",
+            "replacement": "译注：威尔·杜兰特（Will Durant）是美国历史学者，以《世界文明史》闻名。",
+        },
+        "04-chapter2-fn-3": {
+            "action": "rewrite",
+            "reason": "移除外链，保留中性参考说明。",
+            "replacement": "译注：此处原注所引为相关中文参考书目。",
+        },
+        "04-chapter2-fn-4": {
+            "action": "rewrite",
+            "reason": "压缩为必要人物说明。",
+            "replacement": "译注：C. W. Previte-Orton 是英国中世纪史学者。",
+        },
+        "04-chapter2-fn-5": {
+            "action": "rewrite",
+            "reason": "压缩为必要作品说明，移除评价性延伸。",
+            "replacement": "译注：这里指一位耶鲁历史学家及其 1988 年出版的《腐败与罗马的衰亡》。",
+        },
+        "04-chapter2-fn-6": {
+            "action": "rewrite",
+            "reason": "压缩为必要人物说明，移除冗长生平细节。",
+            "replacement": "译注：这里指西奈西乌斯（Synesius），晚期古典世界的主教、哲学家和作家。",
+        },
     },
     "06-chapter4.md": {
         "06-chapter4-fn-1": {
@@ -649,16 +706,36 @@ FOOTNOTE_ACTIONS: dict[str, dict[str, dict[str, str]]] = {
             "reason": "压缩为必要人物说明，移除冗长履历。",
             "replacement": "译注：马丁·范·克雷维尔德（Martin van Creveld）是以战争史与军事理论研究闻名的历史学家。",
         },
+        "06-chapter4-fn-2": {
+            "action": "rewrite",
+            "reason": "压缩为必要作品说明，移除教科书式背景。",
+            "replacement": "译注：《辩谬篇》（On Sophistical Refutations）是亚里士多德逻辑学著作之一。",
+        },
+        "06-chapter4-fn-3": {
+            "action": "rewrite",
+            "reason": "压缩为必要历史说明。",
+            "replacement": "译注：这里指 1517 年马丁·路德公开批评赎罪券、引发宗教改革的著名事件。",
+        },
         "06-chapter4-fn-4": {"action": "remove", "reason": "现代稳定币立法时评，与原书边界不符。"},
         "06-chapter4-fn-5": {
             "action": "rewrite",
             "reason": "压缩为必要地名说明，移除冗长建筑史细节。",
             "replacement": "译注：这里指位于意大利卡塔尼亚的本笃会修道院，现为当地重要历史建筑之一。",
         },
+        "06-chapter4-fn-6": {
+            "action": "rewrite",
+            "reason": "压缩为必要术语说明，移除冗长制度史细节。",
+            "replacement": "译注：什一税（tithe）是欧洲基督教社会长期存在的一种宗教捐税。",
+        },
         "06-chapter4-fn-7": {
             "action": "rewrite",
             "reason": "压缩为必要人物说明，移除冗长生平细节。",
             "replacement": "译注：马基雅维利（Niccolo Machiavelli）是意大利政治思想家，以《君主论》闻名。",
+        },
+        "06-chapter4-fn-8": {
+            "action": "rewrite",
+            "reason": "压缩为必要情节说明。",
+            "replacement": "译注：这里借一则带有讽刺意味的教会逸闻，说明修道纪律的败坏。",
         },
     },
     "07-chapter5.md": {
@@ -741,13 +818,6 @@ FOOTNOTE_ACTIONS: dict[str, dict[str, dict[str, str]]] = {
             "replacement": "译注：久加诺夫（Gennady Zyuganov）是俄罗斯共产党主要领导人之一。",
         },
         "11-chapter9-fn-26": {"action": "remove", "reason": "2025 年刑事新闻时评，与原书边界不符。"},
-    },
-    "04-chapter2.md": {
-        "04-chapter2-fn-3": {
-            "action": "rewrite",
-            "reason": "移除外链，保留中性参考说明。",
-            "replacement": "译注：此处原注所引为相关中文参考书目。",
-        },
     },
     "12-chapter10.md": {
         "12-chapter10-fn-4": {"action": "remove", "reason": "校对旁白，不纳入正式译稿。"},
