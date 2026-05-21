@@ -1,66 +1,48 @@
 # sovereign-individual-cn-revised
 
-基于 [Macin20/sovereign-individual-cn](https://github.com/Macin20/sovereign-individual-cn) 的本地修订版工作仓库。当前仓库重点不再是单纯保留原始 LaTeX 排版，而是围绕以下三条主线组织：
+这是一个极简整理版仓库，目标只有一件事：保留《主权个人》中文版的**最终 Markdown 源**，并提供可复现的 EPUB 构建脚本。
 
-- 保留中文 LaTeX 主源 `tex-zh`
-- 保留逐章审校、清洗与修订成果 `source`、`review`、`build`
-- 产出适合微信读书导入的中文修订版 EPUB
+## 仓库结构
 
-## 当前仓库内容
+- `source/`
+  - 最终 Markdown 源文件
+  - 书名页、版权页、前言、译者序、11 章正文、后记、两份附录
+  - `book-main.md` 汇总稿
+  - `metadata.yaml` EPUB 元数据
+  - `style.css` EPUB 样式
+  - `cover.png` 封面图
+- `build_epub.py`
+  - 从 `source/` 直接生成 EPUB
+- `build_epub.ps1`
+  - Windows 下的一键入口
 
-- `books/original`
-  - 原版英文参考书文件。目前保留英文 PDF 作为来源参考。
-- `tex-zh`
-  - 中文 LaTeX 主源、版式资源、PDF 版本与中间 Markdown 镜像。
-- `source/clean`
-  - 从中文 LaTeX 抽取并清洗出的干净正文源。
-- `review/translation`
-  - 全书中英对照审校记录与问题台账。
-- `source/revised`
-  - 当前最终工作主线：修订版源文件与补充材料。
-- `review/revised`
-  - 修订版边界说明、术语表、终检报告。
-- `build/revised`
-  - 修订版构建中间产物与最终 EPUB。
-- `templates/epub`
-  - 旧版 EPUB 构建所用的模板资源，包括样式、元数据、书名页和版权页模板。
-- `tools`
-  - Python 构建脚本与抽取脚本。
-- `tools/scripts`
-  - PowerShell 入口脚本，便于在 Windows 本地直接重建产物。
+## 生成 EPUB
 
-## 当前产物
+在 Windows 下直接运行：
 
-修订版终稿当前位于：
+```powershell
+.\build_epub.ps1
+```
 
-- `build/revised/output/主权个人-修订版.epub`
+或直接运行：
 
-已冻结的 Git 节点：
+```powershell
+python .\build_epub.py
+```
 
-- `v1-baseline`
-  - 终修前稳定基线
-- `v1-final`
-  - 终稿验收通过后的冻结版本
+生成结果默认输出到：
 
-## 本地构建入口
+- `dist/主权个人-修订版.epub`
+- `dist/validation-report.md`
 
-Windows 下可直接使用：
+构建过程中的中间文件会放到：
 
-- `tools/scripts/build_revised_edition.ps1`
-  - 生成修订版 EPUB
-- `tools/scripts/build_epub.ps1`
-  - 生成较早的基础 EPUB 管线产物
+- `.work/`
 
-对应 Python 脚本：
-
-- `tools/build_revised_edition.py`
-- `tools/build_epub.py`
-- `tools/extract_clean_source.py`
+这两个目录都不进入版本控制。
 
 ## 说明
 
-1. 本仓库保留了原项目中文 LaTeX 主源，但已经移除了未进入当前工作流的中英双语试验目录和零散 TXT 对照稿。
-2. `source/revised` 是当前应优先查看和继续维护的正文源目录。
-3. `review/translation` 保留了完整的逐章审校过程，适合作为修订依据和 fork 后的公开报告基础。
-4. `build/revised` 保留当前修订版的构建结果；`build/legacy-epub` 则保留较早的基础 EPUB 管线产物。
-5. 本项目仅供学习、研究与个人阅读使用，请勿商用。
+1. 当前仓库只保留最终可读、可构建、可复现的核心内容。
+2. 更早的审校记录、清洗中间层、旧目录结构和历史构建产物不再保留在当前树中，但仍可从 Git 历史中追溯。
+3. 本项目仅供学习、研究与个人阅读使用，请勿商用。

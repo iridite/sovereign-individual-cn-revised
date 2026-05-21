@@ -6,49 +6,27 @@ import subprocess
 import sys
 import zipfile
 from pathlib import Path
-from textwrap import dedent
 from xml.etree import ElementTree as ET
 
-import fitz
-
-
-ROOT = Path(__file__).resolve().parents[1]
-LEGACY_SOURCE_ROOT = ROOT / "source" / "clean" / "primary"
-SOURCE_ROOT = ROOT / "source" / "revised"
-MAIN_ROOT = SOURCE_ROOT / "main"
-SUPPLEMENT_ROOT = SOURCE_ROOT / "supplements"
-REVIEW_ROOT = ROOT / "review" / "revised"
-BUILD_ROOT = ROOT / "build" / "revised"
-OUTPUT_ROOT = BUILD_ROOT / "output"
-REPORT_ROOT = BUILD_ROOT / "reports"
-WORK_ROOT = BUILD_ROOT / "_work"
+ROOT = Path(__file__).resolve().parent
+SOURCE_ROOT = ROOT / "source"
+MAIN_ROOT = SOURCE_ROOT
+OUTPUT_ROOT = ROOT / "dist"
+REPORT_ROOT = OUTPUT_ROOT
+WORK_ROOT = ROOT / ".work"
 STAGING_ROOT = WORK_ROOT / "staging"
 ASSET_ROOT = WORK_ROOT / "assets"
 RAW_UNPACKED_ROOT = WORK_ROOT / "raw-unpacked"
 
-PDF_COVER_SOURCE = ROOT / "tex-zh" / "versions" / "Sovereign_Individual_V2.pdf"
-ALT_COVER_SOURCE = Path(r"C:\Users\ollama\Downloads\the-sovereign-individual-9781797103389_hr.jpg")
-
-TITLEPAGE_PATH = MAIN_ROOT / "00-titlepage.md"
-IMPRINT_PATH = MAIN_ROOT / "01-imprint.md"
 STYLE_PATH = SOURCE_ROOT / "style.css"
 METADATA_PATH = SOURCE_ROOT / "metadata.yaml"
-MAIN_BOOK_PATH = SOURCE_ROOT / "book-main.md"
-SUPPLEMENT_BOOK_PATH = SOURCE_ROOT / "supplements.md"
-NOTES_REMOVED_PATH = SUPPLEMENT_ROOT / "notes-removed.md"
-SUPPLEMENT_NOTE_PATH = SUPPLEMENT_ROOT / "version-note.md"
-APPENDIX1_PATH = MAIN_ROOT / "15-appendix.md"
-REVIEW_README_PATH = REVIEW_ROOT / "README.md"
-BOUNDARY_PATH = REVIEW_ROOT / "boundary-notes.md"
-ISSUE_CLOSURE_PATH = REVIEW_ROOT / "issue-closure.md"
-TERMINOLOGY_PATH = REVIEW_ROOT / "terminology.md"
+COVER_SOURCE = SOURCE_ROOT / "cover.png"
 
 RAW_EPUB = OUTPUT_ROOT / "主权个人-修订版-raw.epub"
 FINAL_EPUB = OUTPUT_ROOT / "主权个人-修订版.epub"
-LOG_PATH = REPORT_ROOT / "build.log"
-REPORT_PATH = REPORT_ROOT / "validation-report.md"
+LOG_PATH = OUTPUT_ROOT / "build.log"
+REPORT_PATH = OUTPUT_ROOT / "validation-report.md"
 COVER_PATH = ASSET_ROOT / "cover.png"
-BOOK_COVER_RATIO = 2 / 3
 
 XHTML_NS = "http://www.w3.org/1999/xhtml"
 EPUB_NS = "http://www.idpf.org/2007/ops"
@@ -85,88 +63,6 @@ MAIN_FILE_ORDER = [
     "15-appendix.md",
     "16-appendix2.md",
 ]
-
-COPIED_MAIN_FILES = [
-    "01-preface.md",
-    "02-preface2.md",
-    "03-chapter1.md",
-    "04-chapter2.md",
-    "05-chapter3.md",
-    "06-chapter4.md",
-    "07-chapter5.md",
-    "08-chapter6.md",
-    "09-chapter7.md",
-    "10-chapter8.md",
-    "11-chapter9.md",
-    "12-chapter10.md",
-    "13-chapter11.md",
-    "14-afterword.md",
-    "15-appendix.md",
-    "16-appendix2.md",
-]
-
-TITLEPAGE_TEXT = dedent(
-    """\
-    # 主权个人
-
-    <div class="titlepage">
-      <p class="tp-subtitle">掌握信息时代的变革</p>
-      <p class="tp-original"><em>The Sovereign Individual</em></p>
-      <p class="tp-authors">James Dale Davidson<br />Lord William Rees-Mogg</p>
-      <p class="tp-translator">陈三省 译</p>
-      <p class="tp-edition">1997 年初版 · 2020 年再版</p>
-    </div>
-    """
-)
-
-IMPRINT_TEXT = dedent(
-    """\
-    # 版权与编目信息
-
-    <div class="imprint-page">
-    <div class="imprint-block">
-    <p class="imprint-line">书名：主权个人</p>
-    <p class="imprint-line">作者：James Dale Davidson，Lord William Rees-Mogg</p>
-    <p class="imprint-line">译者：陈三省</p>
-    <p class="imprint-line">出版信息：筷子小手出版社，2025.09</p>
-    <p class="imprint-line">丛书：加密未来系列丛书</p>
-    <p class="imprint-line">ISBN：978-80-7340-097-2</p>
-    <p class="imprint-line">中国版本图书馆 CIP 数据核字：2025 第 00000613 号</p>
-    </div>
-
-    <div class="imprint-block">
-    <p class="imprint-line">原书版本：1997 年第一版，2020 年第二版</p>
-    <p class="imprint-line">当前版本：基于开源 LaTeX 源稿与逐章审校台账整理的修订版电子书</p>
-    <p class="imprint-line">版本口径：正文精修版；保留正式前置页、后记与两份附录</p>
-    <p class="imprint-line">本版在陈三省译稿基础上经二次复校修订：iridite</p>
-    <p class="imprint-line">使用说明：仅供个人阅读与学习交流使用，请勿商用</p>
-    </div>
-
-    <div class="imprint-block">
-    <p class="imprint-line">责任编辑：陈三省</p>
-    <p class="imprint-line">责任校对：李不乖</p>
-    <p class="imprint-line">责任印刷：筷子小手</p>
-    <p class="imprint-line">封面设计：烟云幻梦</p>
-    <p class="imprint-line">仓库地址：github.com/Macin20/sovereign-individual-cn</p>
-    </div>
-    </div>
-    """
-)
-
-METADATA_TEXT = dedent(
-    """\
-    title: "主权个人"
-    author:
-      - "James Dale Davidson / Lord William Rees-Mogg"
-    publisher: "Springer"
-    lang: "zh-CN"
-    rights: "仅供学习交流使用，请勿商用。"
-    identifier: "sovereign-individual-cn-revised"
-    description: "《主权个人》中文修订版。基于开源 LaTeX 中文源稿、逐章中英对照审校记录与二次复核补遗整理，面向微信读书等可重排阅读器，强调正文边界清晰、脚注克制、目录稳定与译风统一。"
-    """
-)
-
-STYLE_TEXT = (ROOT / "templates" / "epub" / "style.css").read_text(encoding="utf-8")
 
 TEXT_REPLACEMENTS: dict[str, list[tuple[str, str]]] = {
     "01-preface.md": [
@@ -1015,19 +911,10 @@ def reset_dir(path: Path) -> None:
 
 
 def ensure_dirs() -> None:
-    SOURCE_ROOT.parent.mkdir(parents=True, exist_ok=True)
-    REVIEW_ROOT.parent.mkdir(parents=True, exist_ok=True)
-    BUILD_ROOT.parent.mkdir(parents=True, exist_ok=True)
-    reset_dir(SOURCE_ROOT)
-    reset_dir(MAIN_ROOT)
-    reset_dir(SUPPLEMENT_ROOT)
-    reset_dir(REVIEW_ROOT)
-    BUILD_ROOT.mkdir(parents=True, exist_ok=True)
+    OUTPUT_ROOT.mkdir(parents=True, exist_ok=True)
     reset_dir(WORK_ROOT)
     reset_dir(STAGING_ROOT)
     reset_dir(ASSET_ROOT)
-    reset_dir(OUTPUT_ROOT)
-    reset_dir(REPORT_ROOT)
     reset_dir(RAW_UNPACKED_ROOT)
 
 
@@ -1087,241 +974,8 @@ def normalize_markdown(text: str) -> str:
     return "\n".join(output).strip() + "\n"
 
 
-def apply_replacements(filename: str, text: str) -> str:
-    for old, new in TEXT_REPLACEMENTS.get(filename, []):
-        if old in text:
-            text = text.replace(old, new)
-    return text
-
-
-def extract_note_block(text: str, note_id: str) -> str | None:
-    pattern = re.compile(rf"(?ms)^\[\^{re.escape(note_id)}\]:[^\n]*(?:\n(?:[ \t].*)?)*")
-    match = pattern.search(text)
-    return match.group(0).rstrip("\n") if match else None
-
-
-def remove_note_block(text: str, note_id: str) -> str:
-    pattern = re.compile(rf"(?ms)^\[\^{re.escape(note_id)}\]:[^\n]*(?:\n(?:[ \t].*)?)*\n?")
-    return pattern.sub("", text)
-
-
-def rewrite_or_remove_notes(filename: str, text: str, archived_notes: list[dict[str, str]]) -> str:
-    note_actions = FOOTNOTE_ACTIONS.get(filename, {})
-    for note_id, config in note_actions.items():
-        original = extract_note_block(text, note_id)
-        if original is None:
-            continue
-        archived_notes.append(
-            {
-                "file": filename,
-                "note_id": note_id,
-                "action": config["action"],
-                "reason": config["reason"],
-                "original": original,
-            }
-        )
-        if config["action"] == "remove":
-            text = remove_note_block(text, note_id)
-            text = re.sub(rf"\[\^{re.escape(note_id)}\]", "", text)
-        elif config["action"] == "rewrite":
-            replacement = f"[^{note_id}]: {config['replacement']}"
-            text = text.replace(original, replacement)
-        else:
-            raise ValueError(f"unknown footnote action: {config['action']}")
-    return text
-
-
-def transform_text(filename: str, text: str, archived_notes: list[dict[str, str]]) -> str:
-    text = apply_replacements(filename, text)
-    text = rewrite_or_remove_notes(filename, text, archived_notes)
-    text = normalize_markdown(text)
-    return text
-
-
-def write_static_sources() -> None:
-    TITLEPAGE_PATH.write_text(normalize_markdown(TITLEPAGE_TEXT), encoding="utf-8")
-    IMPRINT_PATH.write_text(normalize_markdown(IMPRINT_TEXT), encoding="utf-8")
-    STYLE_PATH.write_text(STYLE_TEXT, encoding="utf-8")
-    METADATA_PATH.write_text(METADATA_TEXT, encoding="utf-8")
-
-
-def write_main_sources() -> list[dict[str, str]]:
-    archived_notes: list[dict[str, str]] = []
-    for filename in COPIED_MAIN_FILES:
-        source_path = LEGACY_SOURCE_ROOT / filename
-        target_path = MAIN_ROOT / filename
-        text = source_path.read_text(encoding="utf-8")
-        transformed = transform_text(filename, text, archived_notes)
-        target_path.write_text(transformed, encoding="utf-8")
-    return archived_notes
-
-
-def write_supplements(archived_notes: list[dict[str, str]]) -> None:
-    supplement_note = dedent(
-        """\
-        # 补充说明
-
-        本目录保留以下不并入主书脚注体系的材料：
-
-        - 被直接删除的广告式、立场式、口语旁白式脚注的删除记录
-        - 为维持主书注释口径而保留的处理说明
-
-        处理原则：
-
-        - 主书只保留原书原注、必要的极短译注和必要的人物/地名识别注
-        - 私人广告、私人网站、私人政治立场、校对旁白，不在任何读者可见正文或附录材料中保留
-        - 本目录只承担版本说明与删除记录功能，不视为原书正文的一部分
-        """
-    )
-    SUPPLEMENT_NOTE_PATH.write_text(normalize_markdown(supplement_note), encoding="utf-8")
-
-    lines = [
-        "# 主书移出脚注归档",
-        "",
-        "以下条目已从主书与读者可见附录材料中删除，原因是其带有广告、私人立场、校对旁白或其他明显不具出版专业性的表达。",
-        "",
-    ]
-    for item in archived_notes:
-        if item["action"] != "remove":
-            continue
-        lines.extend(
-            [
-                f"## {item['file']} · {item['note_id']}",
-                "",
-                "- 处理方式：`delete`",
-                f"- 原因：{item['reason']}",
-                "",
-            ]
-        )
-    NOTES_REMOVED_PATH.write_text("\n".join(lines), encoding="utf-8")
-
-
-def concatenate_markdown(paths: list[Path]) -> str:
-    return "\n\n".join(path.read_text(encoding="utf-8").strip() for path in paths) + "\n"
-
-
-def write_combined_sources() -> None:
-    main_paths = [MAIN_ROOT / name for name in MAIN_FILE_ORDER]
-    supplement_paths = [SUPPLEMENT_NOTE_PATH, NOTES_REMOVED_PATH]
-    MAIN_BOOK_PATH.write_text(concatenate_markdown(main_paths), encoding="utf-8")
-    SUPPLEMENT_BOOK_PATH.write_text(concatenate_markdown(supplement_paths), encoding="utf-8")
-
-
-def write_review_docs() -> None:
-    review_readme = dedent(
-        """\
-        # 修订版审校说明
-
-        本目录说明 `review/revised` 中记录的版本边界与审校关闭口径。
-
-        当前版本为“正文精修版”：
-
-        - 主书正文在现有开源译稿基础上做忠实性修订、术语统一与书面化整理
-        - 现代时评、宣传脚注与校对旁白，不再进入任何读者可见正文
-        - 两份附录均作为正式附录保留在主书末尾
-        - 逐章审校台账与二次复核补遗中记录的高确定性问题，已在本次修订中处理或重分类
-        """
-    )
-    REVIEW_README_PATH.write_text(normalize_markdown(review_readme), encoding="utf-8")
-
-    boundary = dedent(
-        """\
-        # 主书与补充区边界
-
-        主书保留：
-
-        - 书名页、版权页
-        - 前言、译者序
-        - 11 章正文
-        - 后记
-        - 附录一
-        - 附录二
-
-        补充区保留：
-
-        - 被删除脚注的处理记录
-        - 版本边界说明
-
-        默认原则：
-
-        - 任何带有广告、私人立场、校对旁白的内容，都不并入主书，也不并入读者可见附录
-        - 需要保留的只是一条处理记录，而不是原始原文
-        """
-    )
-    BOUNDARY_PATH.write_text(normalize_markdown(boundary), encoding="utf-8")
-
-    closure = dedent(
-        """\
-        # 审校问题关闭说明
-
-        关闭方式分三类：
-
-        - `已改入主书`：误译、病字、排版残留、术语误判等，已直接回改
-        - `已压缩重写`：原注保留必要信息，但删去无关延伸
-        - `已移入补充区`：现代时评、宣传链接、立场说明、校对旁白或无原版对应内容
-
-        对既有台账的整体处理结论：
-
-        - `01` 至 `30`：主书正文问题已按回改规则并入修订版主书
-        - `31` 至 `38`：其中涉及脚注污染、附录边界和现代增补的部分，已删除、压缩重写或改列为处理记录
-        - `15-appendix.md` 与 `16-appendix2.md`：均作为正式附录保留在主书中，并继续接受术语与书面度精修
-
-        当前版本仍保留少量“需要后续深抛光”的空间，但不再存在首轮漏章未审或显著现代污染混入主书的问题。
-        """
-    )
-    ISSUE_CLOSURE_PATH.write_text(normalize_markdown(closure), encoding="utf-8")
-
-    terminology = dedent(
-        """\
-        # 核心术语表
-
-        本版终稿精修阶段，暂按以下口径统一核心术语：
-
-        - `nation-state`：民族国家
-        - `sovereign individual`：主权个人
-        - `cognitive elite`：认知精英
-        - `jurisdiction`：管辖区
-        - `denationalization`：去国家化
-        - `network money`：网络货币
-        - `cryptocurrency`：加密货币
-        - `narrowcasting`：窄播
-        - `anarchy`：无政府状态
-        - `anarchism`：无政府主义
-
-        使用原则：
-
-        - 涉及制度竞争、主权选择和税制迁移时，统一用 `管辖区`
-        - 涉及信息时代的新货币形态而非具体链上资产时，优先用 `网络货币`
-        - 涉及比特币、稳定币等具体对象时，再用 `加密货币`
-        - `anarchy` 与 `anarchism` 严格区分，前者是状态，后者是主义
-        - `denationalization` 统一译为 `去国家化`，不再与 `非国有化` 混用
-        """
-    )
-    TERMINOLOGY_PATH.write_text(normalize_markdown(terminology), encoding="utf-8")
-
-
 def render_cover() -> None:
-    if ALT_COVER_SOURCE.exists():
-        document = fitz.open(ALT_COVER_SOURCE)
-        try:
-            page = document.load_page(0)
-            rect = page.rect
-            target_width = rect.height * BOOK_COVER_RATIO
-            x_offset = max((rect.width - target_width) / 2, 0)
-            clip = fitz.Rect(x_offset, 0, x_offset + target_width, rect.height)
-            pixmap = page.get_pixmap(matrix=fitz.Matrix(3, 3), clip=clip, alpha=False)
-            pixmap.save(str(COVER_PATH))
-        finally:
-            document.close()
-        return
-
-    document = fitz.open(PDF_COVER_SOURCE)
-    try:
-        page = document.load_page(0)
-        pixmap = page.get_pixmap(matrix=fitz.Matrix(2.2, 2.2), alpha=False)
-        pixmap.save(str(COVER_PATH))
-    finally:
-        document.close()
+    shutil.copy2(COVER_SOURCE, COVER_PATH)
 
 
 def stage_main_markdown() -> list[Path]:
@@ -1669,12 +1323,7 @@ def is_ascii_path(path: str) -> bool:
 
 def validate_source_texts() -> dict[str, list[str]]:
     issues: list[str] = []
-    for file_path in MAIN_ROOT.glob("*.md"):
-        text = file_path.read_text(encoding="utf-8")
-        for pattern in FORBIDDEN_MAIN_PATTERNS:
-            if pattern in text:
-                issues.append(f"{file_path.name}: contains forbidden token `{pattern}`")
-    for file_path in [SUPPLEMENT_BOOK_PATH, NOTES_REMOVED_PATH]:
+    for file_path in SOURCE_ROOT.glob("*.md"):
         text = file_path.read_text(encoding="utf-8")
         for pattern in FORBIDDEN_MAIN_PATTERNS:
             if pattern in text:
@@ -1812,11 +1461,6 @@ def main() -> int:
     log_lines: list[str] = []
     try:
         ensure_dirs()
-        write_static_sources()
-        archived_notes = write_main_sources()
-        write_supplements(archived_notes)
-        write_combined_sources()
-        write_review_docs()
 
         pandoc = find_executable(
             "pandoc",
