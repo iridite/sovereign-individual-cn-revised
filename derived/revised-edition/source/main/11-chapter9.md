@@ -684,7 +684,7 @@ IBM 的官方网站[^11-chapter9-fn-1]说“世界正在变小”，是一个信
 [^11-chapter9-fn-10]: 当时的美国总统。
 [^11-chapter9-fn-11]: Otis Redding，美国灵魂乐歌手
 [^11-chapter9-fn-12]: Tina Turner，摇滚女王
-[^11-chapter9-fn-13]: Patriot,这里翻译成爱国者其实不太妥。
+[^11-chapter9-fn-13]: 译注：此处的 patriot 更接近“捍卫乡土共同体者”，并非现代民族国家语境中的“爱国者”。
 [^11-chapter9-fn-14]: 译注：约翰·古腾堡（Johannes Gutenberg）是西方活字印刷术的关键推动者。
 [^11-chapter9-fn-15]: 音译
 [^11-chapter9-fn-16]: In-group，或叫内群体。
