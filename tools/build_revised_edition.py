@@ -627,6 +627,11 @@ FOOTNOTE_ACTIONS: dict[str, dict[str, dict[str, str]]] = {
             "reason": "压缩为必要历史说明，移除冗长组织史细节。",
             "replacement": "译注：汉萨同盟是中世纪后期德意志北部诸城市形成的商业联盟。",
         },
+        "03-chapter1-fn-13": {
+            "action": "rewrite",
+            "reason": "压缩为必要地名与事件说明，移除冗长背景。",
+            "replacement": "译注：这里借布加勒斯特指代 1989 年罗马尼亚政权崩溃与东欧剧变中的暴力转折。",
+        },
         "03-chapter1-fn-14": {
             "action": "rewrite",
             "reason": "压缩为必要事件说明，移除过长细节。",
@@ -705,6 +710,18 @@ FOOTNOTE_ACTIONS: dict[str, dict[str, dict[str, str]]] = {
             "replacement": "译注：这里指西奈西乌斯（Synesius），晚期古典世界的主教、哲学家和作家。",
         },
     },
+    "05-chapter3.md": {
+        "05-chapter3-fn-5": {
+            "action": "rewrite",
+            "reason": "压缩为必要术语说明，移除冗长词源与地域细节。",
+            "replacement": "译注：Kaffer 或 Kafir 原意为“异教徒”，后来在某些殖民语境中演变为带有侮辱性的称呼。",
+        },
+        "05-chapter3-fn-7": {
+            "action": "rewrite",
+            "reason": "压缩为必要人物说明，移除冗长学术履历。",
+            "replacement": "译注：拉德克利夫-布朗（Alfred Radcliffe-Brown）是英国社会人类学的重要代表人物之一。",
+        },
+    },
     "06-chapter4.md": {
         "06-chapter4-fn-1": {
             "action": "rewrite",
@@ -753,11 +770,6 @@ FOOTNOTE_ACTIONS: dict[str, dict[str, dict[str, str]]] = {
             "action": "rewrite",
             "reason": "统一人名并压缩为必要人物说明，移除近年案件细节。",
             "replacement": "译注：阿尔韦托·藤森（Alberto Fujimori），1990 至 2000 年任秘鲁总统；其激进改革与强人统治在秘鲁社会一直评价不一。",
-        },
-        "07-chapter5-fn-5": {
-            "action": "rewrite",
-            "reason": "压缩为必要作品说明，移除过长剧情与奖项信息。",
-            "replacement": "译注：《发条橙》（A Clockwork Orange）是安东尼·伯吉斯的小说，也是斯坦利·库布里克的电影改编作品，以暴力、秩序与社会控制主题闻名。",
         },
         "07-chapter5-fn-6": {
             "action": "rewrite",
@@ -862,6 +874,11 @@ FOOTNOTE_ACTIONS: dict[str, dict[str, dict[str, str]]] = {
             "action": "rewrite",
             "reason": "压缩为必要人物注释，移除近年狱中去世信息。",
             "replacement": "译注：卡利集团是哥伦比亚最重要的贩毒集团之一，曾长期主导全球可卡因贸易。",
+        },
+        "13-chapter11-fn-4": {
+            "action": "rewrite",
+            "reason": "压缩为必要宗教团体说明，移除冗长组织史细节。",
+            "replacement": "译注：贵格会（Quakers）是兴起于近代英国的基督教团体，以朴素生活、诚实守信和反战立场著称。",
         },
         "13-chapter11-fn-7": {"action": "remove", "reason": "编者立场声明，不纳入主书脚注。"},
     },
