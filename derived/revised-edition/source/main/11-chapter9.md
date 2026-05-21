@@ -688,11 +688,11 @@ IBM 的官方网站[^11-chapter9-fn-1]说“世界正在变小”，是一个信
 [^11-chapter9-fn-14]: 译注：约翰·古腾堡（Johannes Gutenberg）是西方活字印刷术的关键推动者。
 [^11-chapter9-fn-15]: 音译
 [^11-chapter9-fn-16]: In-group，或叫内群体。
-[^11-chapter9-fn-17]: Christopher Lasch，1932～1994，美国著名历史学家与社会心理学家。其主要著作有《自恋主义文化》、《最小的自我》等。曾有人评价说当代没有任何一位历史学家能像他这样引起公共论坛的震撼。他的文章忠于事实、风格特异，又平易近人，每部作品的出版总会引起极大轰动。
+[^11-chapter9-fn-17]: 译注：克里斯托弗·拉什（Christopher Lasch）是美国历史学家与社会批评家，著有《自恋主义文化》等书。
 [^11-chapter9-fn-18]: 译注：此书原名为《The Revolt of the Elites and the Betrayal of Democracy》。
 [^11-chapter9-fn-19]: 即面临竞争。
 [^11-chapter9-fn-24]: 译注：久加诺夫（Gennady Zyuganov）是俄罗斯共产党主要领导人之一。
 [^11-chapter9-fn-25]: 即难民。
-[^11-chapter9-fn-27]: 三十年战争（Thirty Years' War）是1618至1648年发生在欧洲、以德意志地区为主要战场的一次大规模国际战争。三十年战争加剧了德意志地区的政治分裂，并给社会经济造成严重破坏。该战争标志着宗教改革时代的结束，促成了“民族国家主权至上”原则的确立。
+[^11-chapter9-fn-27]: 译注：三十年战争（1618—1648）是欧洲近代早期的重要大战，深刻改变了德意志地区的政治格局。
 [^11-chapter9-fn-28]: Claim Jumper，强占他人土地的人。
 [^11-chapter9-fn-29]: Pigheaded，顽固刚愎的。

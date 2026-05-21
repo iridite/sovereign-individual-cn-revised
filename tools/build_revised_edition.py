@@ -622,6 +622,11 @@ FOOTNOTE_ACTIONS: dict[str, dict[str, dict[str, str]]] = {
             "reason": "压缩为必要人物说明，移除冗长履历。",
             "replacement": "译注：尼尔·斯蒂芬森（Neal Stephenson）是美国科幻作家，以《雪崩》提出“元宇宙”概念而闻名。",
         },
+        "03-chapter1-fn-12": {
+            "action": "rewrite",
+            "reason": "压缩为必要历史说明，移除冗长组织史细节。",
+            "replacement": "译注：汉萨同盟是中世纪后期德意志北部诸城市形成的商业联盟。",
+        },
         "03-chapter1-fn-14": {
             "action": "rewrite",
             "reason": "压缩为必要事件说明，移除过长细节。",
@@ -766,6 +771,16 @@ FOOTNOTE_ACTIONS: dict[str, dict[str, dict[str, str]]] = {
             "reason": "压缩为必要人物说明，移除近年观点延伸。",
             "replacement": "译注：凯文·凯利（Kevin Kelly），《连线》杂志创始主编之一，长期关注技术与网络文化。",
         },
+        "08-chapter6-fn-3": {
+            "action": "rewrite",
+            "reason": "压缩为必要机构说明，移除企业史细节。",
+            "replacement": "译注：Chiat/Day 是以创意广告著称的美国广告公司，苹果经典广告《致疯狂的人》即出自其手。",
+        },
+        "08-chapter6-fn-4": {
+            "action": "rewrite",
+            "reason": "压缩为必要作品说明，移除延伸阐释。",
+            "replacement": "译注：大卫·埃尔金斯在《超越主权》中讨论了信息时代主权与领土可能分离的趋势。",
+        },
         "08-chapter6-fn-7": {
             "action": "rewrite",
             "reason": "删除与原书无关的近年行政信息。",
@@ -773,6 +788,11 @@ FOOTNOTE_ACTIONS: dict[str, dict[str, dict[str, str]]] = {
         },
     },
     "09-chapter7.md": {
+        "09-chapter7-fn-2": {
+            "action": "rewrite",
+            "reason": "压缩为必要人物说明，移除评价性延伸。",
+            "replacement": "译注：艾伦·格林斯潘（Alan Greenspan）曾长期担任美国联邦储备委员会主席。",
+        },
         "09-chapter7-fn-3": {"action": "remove", "reason": "现代稳定币补充说明，不纳入主书脚注。"},
     },
     "10-chapter8.md": {
@@ -803,6 +823,11 @@ FOOTNOTE_ACTIONS: dict[str, dict[str, dict[str, str]]] = {
             "reason": "压缩为必要人物说明，移除冗长生平细节。",
             "replacement": "译注：约翰·古腾堡（Johannes Gutenberg）是西方活字印刷术的关键推动者。",
         },
+        "11-chapter9-fn-17": {
+            "action": "rewrite",
+            "reason": "压缩为必要人物说明，移除评价性延伸。",
+            "replacement": "译注：克里斯托弗·拉什（Christopher Lasch）是美国历史学家与社会批评家，著有《自恋主义文化》等书。",
+        },
         "11-chapter9-fn-18": {
             "action": "rewrite",
             "reason": "移除外链，保留必要书目信息。",
@@ -816,6 +841,11 @@ FOOTNOTE_ACTIONS: dict[str, dict[str, dict[str, str]]] = {
             "action": "rewrite",
             "reason": "压缩为必要人物说明，移除冗长政治履历。",
             "replacement": "译注：久加诺夫（Gennady Zyuganov）是俄罗斯共产党主要领导人之一。",
+        },
+        "11-chapter9-fn-27": {
+            "action": "rewrite",
+            "reason": "压缩为必要历史说明，移除教科书式概述。",
+            "replacement": "译注：三十年战争（1618—1648）是欧洲近代早期的重要大战，深刻改变了德意志地区的政治格局。",
         },
         "11-chapter9-fn-26": {"action": "remove", "reason": "2025 年刑事新闻时评，与原书边界不符。"},
     },
