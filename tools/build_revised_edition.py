@@ -771,6 +771,11 @@ FOOTNOTE_ACTIONS: dict[str, dict[str, dict[str, str]]] = {
             "reason": "统一人名并压缩为必要人物说明，移除近年案件细节。",
             "replacement": "译注：阿尔韦托·藤森（Alberto Fujimori），1990 至 2000 年任秘鲁总统；其激进改革与强人统治在秘鲁社会一直评价不一。",
         },
+        "07-chapter5-fn-5": {
+            "action": "rewrite",
+            "reason": "压缩为必要作品说明，移除剧情和奖项细节。",
+            "replacement": "译注：《发条橙》（A Clockwork Orange）是安东尼·伯吉斯的小说，也是斯坦利·库布里克的电影改编作品，以暴力、秩序与社会控制主题闻名。",
+        },
         "07-chapter5-fn-6": {
             "action": "rewrite",
             "reason": "压缩为必要组织说明，移除过长背景延伸。",
