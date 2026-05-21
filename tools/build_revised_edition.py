@@ -644,7 +644,22 @@ FOOTNOTE_ACTIONS: dict[str, dict[str, dict[str, str]]] = {
         },
     },
     "06-chapter4.md": {
+        "06-chapter4-fn-1": {
+            "action": "rewrite",
+            "reason": "压缩为必要人物说明，移除冗长履历。",
+            "replacement": "译注：马丁·范·克雷维尔德（Martin van Creveld）是以战争史与军事理论研究闻名的历史学家。",
+        },
         "06-chapter4-fn-4": {"action": "remove", "reason": "现代稳定币立法时评，与原书边界不符。"},
+        "06-chapter4-fn-5": {
+            "action": "rewrite",
+            "reason": "压缩为必要地名说明，移除冗长建筑史细节。",
+            "replacement": "译注：这里指位于意大利卡塔尼亚的本笃会修道院，现为当地重要历史建筑之一。",
+        },
+        "06-chapter4-fn-7": {
+            "action": "rewrite",
+            "reason": "压缩为必要人物说明，移除冗长生平细节。",
+            "replacement": "译注：马基雅维利（Niccolo Machiavelli）是意大利政治思想家，以《君主论》闻名。",
+        },
     },
     "07-chapter5.md": {
         "07-chapter5-fn-1": {
@@ -701,10 +716,38 @@ FOOTNOTE_ACTIONS: dict[str, dict[str, dict[str, str]]] = {
         },
     },
     "11-chapter9.md": {
+        "11-chapter9-fn-1": {
+            "action": "rewrite",
+            "reason": "移除裸链接，保留中性来源说明。",
+            "replacement": "译注：此处原注引 IBM 相关资料。",
+        },
+        "11-chapter9-fn-14": {
+            "action": "rewrite",
+            "reason": "压缩为必要人物说明，移除冗长生平细节。",
+            "replacement": "译注：约翰·古腾堡（Johannes Gutenberg）是西方活字印刷术的关键推动者。",
+        },
+        "11-chapter9-fn-18": {
+            "action": "rewrite",
+            "reason": "移除外链，保留必要书目信息。",
+            "replacement": "译注：此书原名为《The Revolt of the Elites and the Betrayal of Democracy》。",
+        },
         "11-chapter9-fn-20": {"action": "remove", "reason": "2025 年 RWA 行业补注，非原书内容。"},
+        "11-chapter9-fn-21": {"action": "remove", "reason": "按现值换算的现代补注，时效性过强。"},
         "11-chapter9-fn-22": {"action": "remove", "reason": "宣传性个人网站链接，不纳入主书脚注。"},
         "11-chapter9-fn-23": {"action": "remove", "reason": "2022 年政治新闻脚注，与原书边界不符。"},
+        "11-chapter9-fn-24": {
+            "action": "rewrite",
+            "reason": "压缩为必要人物说明，移除冗长政治履历。",
+            "replacement": "译注：久加诺夫（Gennady Zyuganov）是俄罗斯共产党主要领导人之一。",
+        },
         "11-chapter9-fn-26": {"action": "remove", "reason": "2025 年刑事新闻时评，与原书边界不符。"},
+    },
+    "04-chapter2.md": {
+        "04-chapter2-fn-3": {
+            "action": "rewrite",
+            "reason": "移除外链，保留中性参考说明。",
+            "replacement": "译注：此处原注所引为相关中文参考书目。",
+        },
     },
     "12-chapter10.md": {
         "12-chapter10-fn-4": {"action": "remove", "reason": "校对旁白，不纳入正式译稿。"},
