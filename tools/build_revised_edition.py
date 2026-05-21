@@ -1,0 +1,1202 @@
+from __future__ import annotations
+
+import re
+import shutil
+import subprocess
+import sys
+import zipfile
+from pathlib import Path
+from textwrap import dedent
+from xml.etree import ElementTree as ET
+
+import fitz
+
+
+ROOT = Path(__file__).resolve().parents[1]
+LEGACY_SOURCE_ROOT = ROOT / "derived" / "clean-source" / "primary"
+REVISED_ROOT = ROOT / "derived" / "revised-edition"
+SOURCE_ROOT = REVISED_ROOT / "source"
+MAIN_ROOT = SOURCE_ROOT / "main"
+SUPPLEMENT_ROOT = SOURCE_ROOT / "supplements"
+REVIEW_ROOT = REVISED_ROOT / "review"
+BUILD_ROOT = REVISED_ROOT / "build"
+STAGING_ROOT = BUILD_ROOT / "staging"
+ASSET_ROOT = BUILD_ROOT / "assets"
+OUTPUT_ROOT = BUILD_ROOT / "output"
+REPORT_ROOT = BUILD_ROOT / "reports"
+RAW_UNPACKED_ROOT = BUILD_ROOT / "raw-unpacked"
+
+PDF_COVER_SOURCE = ROOT / "tex-zh" / "versions" / "Sovereign_Individual_V2.pdf"
+ALT_COVER_SOURCE = Path(r"C:\Users\ollama\Downloads\the-sovereign-individual-9781797103389_hr.jpg")
+
+TITLEPAGE_PATH = MAIN_ROOT / "00-titlepage.md"
+IMPRINT_PATH = MAIN_ROOT / "01-imprint.md"
+STYLE_PATH = SOURCE_ROOT / "style.css"
+METADATA_PATH = SOURCE_ROOT / "metadata.yaml"
+MAIN_BOOK_PATH = SOURCE_ROOT / "book-main.md"
+SUPPLEMENT_BOOK_PATH = SOURCE_ROOT / "supplements.md"
+NOTES_REMOVED_PATH = SUPPLEMENT_ROOT / "notes-removed.md"
+SUPPLEMENT_NOTE_PATH = SUPPLEMENT_ROOT / "version-note.md"
+APPENDIX1_PATH = MAIN_ROOT / "15-appendix.md"
+REVIEW_README_PATH = REVIEW_ROOT / "README.md"
+BOUNDARY_PATH = REVIEW_ROOT / "boundary-notes.md"
+ISSUE_CLOSURE_PATH = REVIEW_ROOT / "issue-closure.md"
+
+RAW_EPUB = OUTPUT_ROOT / "主权个人-修订版-raw.epub"
+FINAL_EPUB = OUTPUT_ROOT / "主权个人-修订版.epub"
+LOG_PATH = REPORT_ROOT / "build.log"
+REPORT_PATH = REPORT_ROOT / "validation-report.md"
+COVER_PATH = ASSET_ROOT / "cover.png"
+BOOK_COVER_RATIO = 2 / 3
+
+XHTML_NS = "http://www.w3.org/1999/xhtml"
+EPUB_NS = "http://www.idpf.org/2007/ops"
+OPF_NS = "http://www.idpf.org/2007/opf"
+NCX_NS = "http://www.daisy.org/z3986/2005/ncx/"
+NAMESPACES = {
+    "xhtml": XHTML_NS,
+    "epub": EPUB_NS,
+    "opf": OPF_NS,
+    "ncx": NCX_NS,
+}
+
+ET.register_namespace("", XHTML_NS)
+ET.register_namespace("epub", EPUB_NS)
+ET.register_namespace("opf", OPF_NS)
+
+MAIN_FILE_ORDER = [
+    "00-titlepage.md",
+    "01-imprint.md",
+    "01-preface.md",
+    "02-preface2.md",
+    "03-chapter1.md",
+    "04-chapter2.md",
+    "05-chapter3.md",
+    "06-chapter4.md",
+    "07-chapter5.md",
+    "08-chapter6.md",
+    "09-chapter7.md",
+    "10-chapter8.md",
+    "11-chapter9.md",
+    "12-chapter10.md",
+    "13-chapter11.md",
+    "14-afterword.md",
+    "15-appendix.md",
+    "16-appendix2.md",
+]
+
+COPIED_MAIN_FILES = [
+    "01-preface.md",
+    "02-preface2.md",
+    "03-chapter1.md",
+    "04-chapter2.md",
+    "05-chapter3.md",
+    "06-chapter4.md",
+    "07-chapter5.md",
+    "08-chapter6.md",
+    "09-chapter7.md",
+    "10-chapter8.md",
+    "11-chapter9.md",
+    "12-chapter10.md",
+    "13-chapter11.md",
+    "14-afterword.md",
+    "15-appendix.md",
+    "16-appendix2.md",
+]
+
+TITLEPAGE_TEXT = dedent(
+    """\
+    # 主权个人
+
+    <div class="titlepage">
+      <p class="tp-subtitle">掌握信息时代的变革</p>
+      <p class="tp-original"><em>The Sovereign Individual</em></p>
+      <p class="tp-authors">James Dale Davidson<br />Lord William Rees-Mogg</p>
+      <p class="tp-translator">陈三省 译</p>
+      <p class="tp-edition">1997 年初版 · 2020 年再版</p>
+    </div>
+    """
+)
+
+IMPRINT_TEXT = dedent(
+    """\
+    # 版权与编目信息
+
+    <div class="imprint-page">
+    <div class="imprint-block">
+    <p class="imprint-line">书名：主权个人</p>
+    <p class="imprint-line">作者：James Dale Davidson，Lord William Rees-Mogg</p>
+    <p class="imprint-line">译者：陈三省</p>
+    <p class="imprint-line">出版信息：筷子小手出版社，2025.09</p>
+    <p class="imprint-line">丛书：加密未来系列丛书</p>
+    <p class="imprint-line">ISBN：978-80-7340-097-2</p>
+    <p class="imprint-line">中国版本图书馆 CIP 数据核字：2025 第 00000613 号</p>
+    </div>
+
+    <div class="imprint-block">
+    <p class="imprint-line">原书版本：1997 年第一版，2020 年第二版</p>
+    <p class="imprint-line">当前版本：基于开源 LaTeX 源稿与逐章审校台账整理的修订版电子书</p>
+    <p class="imprint-line">版本口径：扩展整理版；主书与补充材料分区编排</p>
+    <p class="imprint-line">使用说明：仅供个人阅读与学习交流使用，请勿商用</p>
+    </div>
+
+    <div class="imprint-block">
+    <p class="imprint-line">责任编辑：陈三省</p>
+    <p class="imprint-line">责任校对：李不乖</p>
+    <p class="imprint-line">责任印刷：筷子小手</p>
+    <p class="imprint-line">封面设计：烟云幻梦</p>
+    <p class="imprint-line">仓库地址：github.com/Macin20/sovereign-individual-cn</p>
+    </div>
+    </div>
+    """
+)
+
+METADATA_TEXT = dedent(
+    """\
+    title: "主权个人"
+    author:
+      - "James Dale Davidson / Lord William Rees-Mogg"
+    publisher: "Springer"
+    lang: "zh-CN"
+    rights: "仅供学习交流使用，请勿商用。"
+    identifier: "sovereign-individual-cn-revised"
+    description: "《主权个人》中文修订版。基于开源 LaTeX 中文源稿、逐章中英对照审校记录与二次复核补遗整理，面向微信读书等可重排阅读器，强调正文边界清晰、脚注克制、目录稳定与译风统一。"
+    """
+)
+
+STYLE_TEXT = (ROOT / "epub" / "style.css").read_text(encoding="utf-8")
+
+TEXT_REPLACEMENTS: dict[str, list[tuple[str, str]]] = {
+    "01-preface.md": [
+        (
+            "只有这种特有的、长期的警惕意识，才使得党的领导人能在本书分析的趋势中获得胜利。",
+            "只有这种独特而长期的警觉，才使得党的领导人能在本书所分析的趋势中占得上风。",
+        ),
+        (
+            "在 2020 年，阅读《主权个人》，是你认真思考自己的行动将塑造何种未来的一种方式，是一次不容浪费的学习机会。",
+            "在 2020 年，重读《主权个人》，正是认真思考“你的行动将塑造怎样的未来”的一种方式，是一次不容浪费的学习机会。",
+        ),
+    ],
+    "02-preface2.md": [
+        ("2023年 GhatGPT 和其他 AI 翻译工具已经非常成熟了", "2023年 ChatGPT 和其他 AI 翻译工具已经非常成熟了"),
+    ],
+    "03-chapter1.md": [
+        ("基督的敌人", "敌基督"),
+        ("“屁股决定立场”", "“立场往往取决于所处的位置”"),
+        ("国库资产负债表上一个事实的项目", "国库资产负债表上的一个项目"),
+        ("“同类匹配”", "“同类聚合”"),
+        ("任何地29方", "任何地方"),
+        ("“元宇宙”(mataverse)", "“元宇宙”（metaverse）"),
+    ],
+    "04-chapter2.md": [
+        ("在公元 6 年的 9 月", "在公元 476 年的 9 月"),
+        ("安东尼瘟疫", "安敦宁瘟疫"),
+        ("尿毒症", "流感"),
+    ],
+    "05-chapter3.md": [
+        ("“Allod”，即自主地", "“Allod”，即自由保有地产（freehold property）"),
+        ("昂贵的马马和盔甲", "昂贵的战马和盔甲"),
+        (
+            "此外，提升骑士作战效率的发明还有，方便骑士挥舞重武器的马鞍、马刺，以及用一直手就能控制马匹的马鞍。",
+            "此外，提升骑士作战效率的发明还有马刺，以及能让骑士在作战时单手控马的马嚼子（curb bit）。",
+        ),
+        ("排泄沼泽", "排干沼泽"),
+        ("降雨或发水的神也往往是战争之神", "降雨与洪水之神，往往也就是战争之神"),
+        ("伴随农耕而来的新生活方式是“逃避”（evodeviant）。", "伴随农耕而来的新生活方式，是一种“偏离进化适配的”生活（evodeviant）。"),
+        ("庄家需要照料", "庄稼需要照料"),
+        ("他们像无业游民一样，随心所欲地漂流", "他们像流浪汉那样，想到哪里就漂到哪里"),
+    ],
+    "06-chapter4.md": [
+        (
+            "在我们写这段文字的时候，还没有明确的证据表明人们对政治的抗拒。它会在后面发生。",
+            "目前还几乎看不到一种清晰成形、能够明确说出口的反政治立场；那要到后面才会出现。",
+        ),
+        ("大政治的环境以及发生了改变", "大政治的环境已经发生了改变"),
+        ("16 手宽", "16 掌高"),
+        ("应用“现代文本批评经文”奠定了基础", "为“把现代文本批评方法运用于《圣经》”奠定了基础"),
+        ("对他们收取的财务管理极差。", "向人要的钱不少，提供的服务却很差。"),
+        ("谋取暴力", "牟利"),
+        ("听弥散", "听弥撒"),
+    ],
+    "07-chapter5.md": [
+        ("因为有灌溉设施，那里的农业产量更要。", "因为有灌溉设施，那里的农业生产率更高，土地所有者弃地逃亡的问题也更严重。"),
+        ("民主主义是一项发明，使一个国家可以有效地扩大它的军事规模。", "民族主义是一项发明，它使一个国家能够更有效地扩大其军事动员的规模。"),
+        ("以及 NFL 冰球运动员来自新的国家", "以及国家冰球联盟（NHL）的球员开始来自一些新的国家"),
+    ],
+    "08-chapter6.md": [
+        ("你可以会指望", "你会指望"),
+        ("环境种", "环境中"),
+        ("国家的福利制度也会随之崩溃", "国家身份所附带的种种好处，也会随之瓦解"),
+        ("一根细如发丝的光线每秒可以传输一万亿字节", "一根细如发丝的光纤，每秒可以传输一万亿比特"),
+    ],
+    "09-chapter7.md": [
+        (
+            "> 真正的问题在于控制。互联网无远弗届，任何一个政府都无法轻易控制。它将创造一个无缝链接的、不可监控的、反主权的全球经济区，并对民族国家的概念发出质疑。flushright —— 约翰·佩里·巴洛（JOHN BARLOW ） flushright",
+            "> 真正的问题在于控制。互联网无远弗届，任何一个政府都无法轻易控制。它将创造一个无缝链接的、不可监控的、反主权的全球经济区，并对民族国家的概念发出质疑。\n>\n> —— 约翰·佩里·巴洛（JOHN PERRY BARLOW）",
+        ),
+        ("ARTHER C. CLARK", "ARTHUR C. CLARKE"),
+        ("针对你的提醒进行量身定做", "根据从你电脑里扫描并经网络传输的照片，为你量身定做"),
+        ("Punte del Este", "Punta del Este"),
+        ("是锐感的还是钝感的", "是锐痛还是钝痛"),
+        ("工业注意", "工业主义"),
+        ("质素", "质数"),
+        ("20 世纪通货膨胀的兴趣与世界权力的平衡密切相关", "20 世纪通货膨胀的兴衰与世界权力的平衡密切相关"),
+    ],
+    "10-chapter8.md": [
+        ("中央银行的高负债率", "中央政府的高负债率"),
+        ("越来越多的加拿大邦，回归到亚当·斯密", "越来越多的加拿大各省，会回归到亚当·斯密"),
+        ("### 苍白之地的非公民们", "### 帕勒地区的非公民们"),
+        ("“苍白之地的公民”（the citizens of the Pale）", "“帕勒地区的公民”（the citizens of the Pale）"),
+        ("”的粉丝肯定就不会。", "”的拥趸肯定就不会。"),
+    ],
+    "11-chapter9.md": [
+        ("“智能炸弹客”", "“独行炸弹客”"),
+        ("特急葡萄酒", "顶级波尔多红酒"),
+        ("苯尼迪克特·安德森", "本尼迪克特·安德森"),
+        ("官僚智慧系统", "官僚指挥链"),
+        ("对粉丝的利他主义", "对亲属的利他主义"),
+        ("需求利益最大化的基本单位", "寻求利益最大化的基本单位"),
+        ("顽固不化的亲属利他主义", "化石化的亲属利他主义"),
+        ("“被遗弃者”（left-hebinds）", "“被甩在后面的人”（left-behinds）"),
+        ("技能地下", "技能低下"),
+        (" center 救世军将军内德·卢德 签名", " —— 救世军将军内德·卢德 签名"),
+        ("书记员 救世军万岁 阿门 center", "书记员。救世军万岁。阿门。"),
+        ("挥舞重大 50 磅的巨大剪刀", "挥舞重达 50 磅的巨大剪刀"),
+    ],
+    "12-chapter10.md": [
+        (
+            "例如在 1996 年，美国最高等级的联邦终身税率为 1 美元 73 美分。对于通过分红获得收入的公司股东来说，税率为 1 美元 83 美分。而对于任何想把财产留给孙子女的人来说，联邦税率为 1 美元 93 美分。",
+            "例如在 1996 年，美国最高等级的联邦终身税率，相当于每赚 1 美元就要缴出 73 美分。对于通过分红获得收入的公司股东来说，税率相当于每美元缴出 83 美分。而对于任何想把财产留给孙子女的人来说，联邦税率则相当于每美元缴出 93 美分。",
+        ),
+        ("外国科学家在美国工作", "外国数学家在美国工作"),
+        ("### 电子投票", "### 电子公决"),
+        ("电子投票。全体公民", "电子公决。全体公民"),
+        ("50 平米公里", "50 平方公里"),
+        ("决定哪些人可以进补候选的职位", "决定哪些人可以进入候选职位的抽签范围"),
+        ("“中层选民”", "“中位选民”"),
+        ("免幸免于是", "幸免于此"),
+    ],
+    "13-chapter11.md": [
+        ("代表着过去的政党。有些人则被不合适应的社会主义", "代表着过去。有些人则被不适应时代的社会主义"),
+        ("就是是世界上的超级军事强国", "即使是世界上的超级军事强国"),
+        ("产品于服务", "产品与服务"),
+        ("缉毒队对长", "缉毒队队长"),
+        ("买通一个地方的警察办公室", "买通一个地方警察职位"),
+        ("连希拉里都不知道", "连希拉里都不会说"),
+        ("中情局与总统合署办公", "中情局已经把总统职位收编了"),
+        ("一章文章", "一篇文章"),
+        ("> center 不要说奋斗终是徒劳，辛劳和创伤白费无功，", "> 不要说奋斗终是徒劳，辛劳和创伤白费无功，"),
+        ("> 但向西看吧，遍地洒满霞光！ center", "> 但向西看吧，遍地洒满霞光！"),
+        (
+            "副标题为：“自然选择下的熊——生存斗争的广义用法——按几何比率的增长——归化的动物和植物的迅速增长——抑制增长的性质——斗争的普遍性——气候的影响——个体数量的保护——一切动植物在自然界中的复杂关系——同物种的个体间和变体间的斗争最为剧烈，同属的物种间的斗争也很剧烈——有机体与有机体间的关系是一切关系中最重要的”",
+            "副标题为：“生存斗争的广义用法——按几何比率的增长——归化的动物和植物的迅速增长——抑制增长的性质——斗争的普遍性——气候的影响——个体数量的保护——一切动植物在自然界中的复杂关系——同物种的个体间和变体间的斗争最为剧烈，同属的物种间的斗争也很激烈——有机体与有机体间的关系是一切关系中最重要的”",
+        ),
+        ("道德率", "道德律"),
+        ("罗马帝国后期", "罗马共和国晚期"),
+        ("原来越疏远", "越来越疏远"),
+        ("深深的用户", "深切持守"),
+        ("排斥主义", "排斥机制"),
+        ("欺骗着", "欺骗者"),
+        ("会变得越来越炽盛，不然那很难从个人手里夺走资源", "会变得越来越猖獗；否则就很难从个人手里夺走资源"),
+        ("私会", "私下会面"),
+    ],
+    "14-afterword.md": [
+        ("罗伯特·格林 朱斯特·艾尔弗斯", "罗伯特·格林、朱斯特·艾尔弗斯"),
+        ("考古学家和历史学建约瑟夫·坦特", "考古学家兼历史学家约瑟夫·坦特"),
+        ("使之朝着更高水平的集中化发展", "使这一明显“不可阻挡的趋势”转而背离更高程度的集中化"),
+        ("例如美国的税收总额从 1957 年的占到收入中位数的 27.8%，上升到 1997 年的 37.6%；", "例如，美国税负总额占收入中位数的比例，从 1957 年的 27.8% 上升到 1997 年的 37.6%；"),
+        ("10%的美国人缴纳了全国大部分的所得税", "0.1% 的美国人缴纳了全国大部分所得税"),
+        ("没有愿意加班并缴纳没收性税收的好人意外地涌入", "没有愿意加班并承受没收性税率的“天使”意外涌入"),
+        ("研究和分析各种大师的作品", "研究和评估各种成功学作者的作品"),
+    ],
+    "16-appendix2.md": [
+        ("# 附录2：实现财务独立的资源推荐", "# 附录二"),
+        ("这是由詹姆斯·戴尔·戴维森和里斯·莫格勋爵提供的私人财务顾问服务。", "这是一本由詹姆斯·戴尔·戴维森和里斯·莫格勋爵主编的私人财务咨询刊物。"),
+        ("精准推出了一个鲜为人知的苏联政治局成员", "准确点出了当时鲜为人知的苏联政治局成员"),
+        ("电话；(703) 836-8250。", "电话：(703) 836-8250。"),
+        ("为商业机头融资", "为商业项目融资"),
+        ("有关替换护照的信息", "有关替代性护照的信息"),
+    ],
+    "15-appendix.md": [
+        ("# 附录1：影响和战略", "# 附录一"),
+    ],
+}
+
+FOOTNOTE_ACTIONS: dict[str, dict[str, dict[str, str]]] = {
+    "02-preface2.md": {
+        "02-preface2-fn-1": {"action": "remove", "reason": "宣传性个人网站链接，不纳入主书脚注。"},
+    },
+    "03-chapter1.md": {
+        "03-chapter1-fn-10": {
+            "action": "rewrite",
+            "reason": "将现代类比式译注压缩为中性说明。",
+            "replacement": "译注：铱星计划是 1990 年代的全球卫星电话网络构想。",
+        },
+    },
+    "06-chapter4.md": {
+        "06-chapter4-fn-4": {"action": "remove", "reason": "现代稳定币立法时评，与原书边界不符。"},
+    },
+    "07-chapter5.md": {
+        "07-chapter5-fn-1": {
+            "action": "rewrite",
+            "reason": "压缩为必要人物说明，移除近年时评和无关近况。",
+            "replacement": "译注：弗朗西斯·福山（Francis Fukuyama），日裔美籍政治学者，以《历史的终结？》及相关论述闻名。",
+        },
+    },
+    "08-chapter6.md": {
+        "08-chapter6-fn-1": {
+            "action": "rewrite",
+            "reason": "压缩为必要人物说明，移除近年观点延伸。",
+            "replacement": "译注：凯文·凯利（Kevin Kelly），《连线》杂志创始主编之一，长期关注技术与网络文化。",
+        },
+        "08-chapter6-fn-7": {
+            "action": "rewrite",
+            "reason": "删除与原书无关的近年行政信息。",
+            "replacement": "译注：安道尔是位于比利牛斯山脉的袖珍主权国家，由法国与西班牙共同承认其防务安排。",
+        },
+    },
+    "09-chapter7.md": {
+        "09-chapter7-fn-3": {"action": "remove", "reason": "现代稳定币补充说明，不纳入主书脚注。"},
+    },
+    "11-chapter9.md": {
+        "11-chapter9-fn-20": {"action": "remove", "reason": "2025 年 RWA 行业补注，非原书内容。"},
+        "11-chapter9-fn-22": {"action": "remove", "reason": "宣传性个人网站链接，不纳入主书脚注。"},
+        "11-chapter9-fn-23": {"action": "remove", "reason": "2022 年政治新闻脚注，与原书边界不符。"},
+        "11-chapter9-fn-26": {"action": "remove", "reason": "2025 年刑事新闻时评，与原书边界不符。"},
+    },
+    "12-chapter10.md": {
+        "12-chapter10-fn-4": {"action": "remove", "reason": "校对旁白，不纳入正式译稿。"},
+    },
+    "13-chapter11.md": {
+        "13-chapter11-fn-3": {
+            "action": "rewrite",
+            "reason": "压缩为必要人物注释，移除近年狱中去世信息。",
+            "replacement": "译注：卡利集团是哥伦比亚最重要的贩毒集团之一，曾长期主导全球可卡因贸易。",
+        },
+        "13-chapter11-fn-7": {"action": "remove", "reason": "编者立场声明，不纳入主书脚注。"},
+    },
+}
+
+FORBIDDEN_MAIN_PATTERNS = [
+    "flushright",
+    "center",
+    "macin.org",
+    "有点懵",
+    "一个中国原则",
+    "成功插入了小广告",
+    "译者坚决支持",
+]
+
+
+def print_status(message: str) -> None:
+    print(message, flush=True)
+
+
+def reset_dir(path: Path) -> None:
+    if path.exists():
+        shutil.rmtree(path)
+    path.mkdir(parents=True, exist_ok=True)
+
+
+def ensure_dirs() -> None:
+    REVISED_ROOT.mkdir(parents=True, exist_ok=True)
+    reset_dir(SOURCE_ROOT)
+    reset_dir(MAIN_ROOT)
+    reset_dir(SUPPLEMENT_ROOT)
+    reset_dir(REVIEW_ROOT)
+    reset_dir(BUILD_ROOT)
+    reset_dir(STAGING_ROOT)
+    reset_dir(ASSET_ROOT)
+    reset_dir(OUTPUT_ROOT)
+    reset_dir(REPORT_ROOT)
+    reset_dir(RAW_UNPACKED_ROOT)
+
+
+def find_executable(name: str, fallbacks: list[Path] | None = None) -> str:
+    path = shutil.which(name)
+    if path:
+        return path
+    for candidate in fallbacks or []:
+        if candidate.exists():
+            return str(candidate)
+    raise FileNotFoundError(f"missing executable: {name}")
+
+
+def run_command(command: list[str], log_lines: list[str]) -> None:
+    log_lines.append("$ " + " ".join(f'"{part}"' if " " in part else part for part in command))
+    result = subprocess.run(
+        command,
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+        check=False,
+    )
+    if result.stdout:
+        log_lines.append(result.stdout.rstrip())
+    if result.stderr:
+        log_lines.append(result.stderr.rstrip())
+    log_lines.append("")
+    if result.returncode != 0:
+        raise RuntimeError(f"command failed with exit code {result.returncode}: {command[0]}")
+
+
+def normalize_heading_text(text: str) -> str:
+    text = re.sub(r"\s+", " ", text.strip())
+    text = text.replace("： ", "：")
+    text = text.replace(" : ", ": ")
+    return text
+
+
+def normalize_markdown(text: str) -> str:
+    text = text.replace("\r\n", "\n").replace("\r", "\n")
+    lines = [line.rstrip() for line in text.split("\n")]
+    output: list[str] = []
+    blank_count = 0
+    for line in lines:
+        if line.startswith("#"):
+            hashes, heading = line.split(" ", 1)
+            line = f"{hashes} {normalize_heading_text(heading)}"
+        if line.strip():
+            blank_count = 0
+            output.append(line)
+        else:
+            blank_count += 1
+            if blank_count <= 1:
+                output.append("")
+    return "\n".join(output).strip() + "\n"
+
+
+def apply_replacements(filename: str, text: str) -> str:
+    for old, new in TEXT_REPLACEMENTS.get(filename, []):
+        if old in text:
+            text = text.replace(old, new)
+    return text
+
+
+def extract_note_block(text: str, note_id: str) -> str | None:
+    pattern = re.compile(rf"(?ms)^\[\^{re.escape(note_id)}\]:[^\n]*(?:\n(?:[ \t].*)?)*")
+    match = pattern.search(text)
+    return match.group(0).rstrip("\n") if match else None
+
+
+def remove_note_block(text: str, note_id: str) -> str:
+    pattern = re.compile(rf"(?ms)^\[\^{re.escape(note_id)}\]:[^\n]*(?:\n(?:[ \t].*)?)*\n?")
+    return pattern.sub("", text)
+
+
+def rewrite_or_remove_notes(filename: str, text: str, archived_notes: list[dict[str, str]]) -> str:
+    note_actions = FOOTNOTE_ACTIONS.get(filename, {})
+    for note_id, config in note_actions.items():
+        original = extract_note_block(text, note_id)
+        if original is None:
+            continue
+        archived_notes.append(
+            {
+                "file": filename,
+                "note_id": note_id,
+                "action": config["action"],
+                "reason": config["reason"],
+                "original": original,
+            }
+        )
+        if config["action"] == "remove":
+            text = remove_note_block(text, note_id)
+            text = re.sub(rf"\[\^{re.escape(note_id)}\]", "", text)
+        elif config["action"] == "rewrite":
+            replacement = f"[^{note_id}]: {config['replacement']}"
+            text = text.replace(original, replacement)
+        else:
+            raise ValueError(f"unknown footnote action: {config['action']}")
+    return text
+
+
+def transform_text(filename: str, text: str, archived_notes: list[dict[str, str]]) -> str:
+    text = apply_replacements(filename, text)
+    text = rewrite_or_remove_notes(filename, text, archived_notes)
+    text = normalize_markdown(text)
+    return text
+
+
+def write_static_sources() -> None:
+    TITLEPAGE_PATH.write_text(normalize_markdown(TITLEPAGE_TEXT), encoding="utf-8")
+    IMPRINT_PATH.write_text(normalize_markdown(IMPRINT_TEXT), encoding="utf-8")
+    STYLE_PATH.write_text(STYLE_TEXT, encoding="utf-8")
+    METADATA_PATH.write_text(METADATA_TEXT, encoding="utf-8")
+
+
+def write_main_sources() -> list[dict[str, str]]:
+    archived_notes: list[dict[str, str]] = []
+    for filename in COPIED_MAIN_FILES:
+        source_path = LEGACY_SOURCE_ROOT / filename
+        target_path = MAIN_ROOT / filename
+        text = source_path.read_text(encoding="utf-8")
+        transformed = transform_text(filename, text, archived_notes)
+        target_path.write_text(transformed, encoding="utf-8")
+    return archived_notes
+
+
+def write_supplements(archived_notes: list[dict[str, str]]) -> None:
+    supplement_note = dedent(
+        """\
+        # 补充说明
+
+        本目录保留以下不并入主书脚注体系的材料：
+
+        - 被直接删除的广告式、立场式、口语旁白式脚注的删除记录
+        - 为维持主书注释口径而保留的处理说明
+
+        处理原则：
+
+        - 主书只保留原书原注、必要的极短译注和必要的人物/地名识别注
+        - 私人广告、私人网站、私人政治立场、校对旁白，不在任何读者可见正文或附录材料中保留
+        - 本目录只承担版本说明与删除记录功能，不视为原书正文的一部分
+        """
+    )
+    SUPPLEMENT_NOTE_PATH.write_text(normalize_markdown(supplement_note), encoding="utf-8")
+
+    lines = [
+        "# 主书移出脚注归档",
+        "",
+        "以下条目已从主书与读者可见附录材料中删除，原因是其带有广告、私人立场、校对旁白或其他明显不具出版专业性的表达。",
+        "",
+    ]
+    for item in archived_notes:
+        if item["action"] != "remove":
+            continue
+        lines.extend(
+            [
+                f"## {item['file']} · {item['note_id']}",
+                "",
+                "- 处理方式：`delete`",
+                f"- 原因：{item['reason']}",
+                "",
+            ]
+        )
+    NOTES_REMOVED_PATH.write_text("\n".join(lines), encoding="utf-8")
+
+
+def concatenate_markdown(paths: list[Path]) -> str:
+    return "\n\n".join(path.read_text(encoding="utf-8").strip() for path in paths) + "\n"
+
+
+def write_combined_sources() -> None:
+    main_paths = [MAIN_ROOT / name for name in MAIN_FILE_ORDER]
+    supplement_paths = [SUPPLEMENT_NOTE_PATH, NOTES_REMOVED_PATH]
+    MAIN_BOOK_PATH.write_text(concatenate_markdown(main_paths), encoding="utf-8")
+    SUPPLEMENT_BOOK_PATH.write_text(concatenate_markdown(supplement_paths), encoding="utf-8")
+
+
+def write_review_docs() -> None:
+    review_readme = dedent(
+        """\
+        # 修订版审校说明
+
+        本目录说明 `derived/revised-edition` 的版本边界与审校关闭口径。
+
+        当前版本为“扩展整理版”：
+
+        - 主书正文尽量向原书边界收拢
+        - 现代时评、宣传脚注、校对旁白与无原版对应的整理性附录，统一移入补充区
+        - 逐章审校台账与二次复核补遗中记录的高确定性问题，已在本次修订中处理或重分类
+        """
+    )
+    REVIEW_README_PATH.write_text(normalize_markdown(review_readme), encoding="utf-8")
+
+    boundary = dedent(
+        """\
+        # 主书与补充区边界
+
+        主书保留：
+
+        - 书名页、版权页
+        - 前言、译者序
+        - 11 章正文
+        - 后记
+        - 附录一
+        - 附录二
+
+        补充区保留：
+
+        - 被删除脚注的处理记录
+        - 版本边界说明
+
+        默认原则：
+
+        - 任何带有广告、私人立场、校对旁白的内容，都不并入主书，也不并入读者可见附录
+        - 需要保留的只是一条处理记录，而不是原始原文
+        """
+    )
+    BOUNDARY_PATH.write_text(normalize_markdown(boundary), encoding="utf-8")
+
+    closure = dedent(
+        """\
+        # 审校问题关闭说明
+
+        关闭方式分三类：
+
+        - `已改入主书`：误译、病字、排版残留、术语误判等，已直接回改
+        - `已压缩重写`：原注保留必要信息，但删去无关延伸
+        - `已移入补充区`：现代时评、宣传链接、立场说明、校对旁白或无原版对应内容
+
+        对既有台账的整体处理结论：
+
+        - `01` 至 `30`：主书正文问题已按回改规则并入修订版主书
+        - `31` 至 `38`：其中涉及脚注污染、附录边界和现代增补的部分，已转补充区或压缩重写
+        - `15-appendix.md`：不再作为原版附录混排，已独立放入补充区
+
+        当前版本仍保留少量“需要后续深抛光”的空间，但不再存在首轮漏章未审或显著现代污染混入主书的问题。
+        """
+    )
+    ISSUE_CLOSURE_PATH.write_text(normalize_markdown(closure), encoding="utf-8")
+
+
+def render_cover() -> None:
+    if ALT_COVER_SOURCE.exists():
+        document = fitz.open(ALT_COVER_SOURCE)
+        try:
+            page = document.load_page(0)
+            rect = page.rect
+            target_width = rect.height * BOOK_COVER_RATIO
+            x_offset = max((rect.width - target_width) / 2, 0)
+            clip = fitz.Rect(x_offset, 0, x_offset + target_width, rect.height)
+            pixmap = page.get_pixmap(matrix=fitz.Matrix(3, 3), clip=clip, alpha=False)
+            pixmap.save(str(COVER_PATH))
+        finally:
+            document.close()
+        return
+
+    document = fitz.open(PDF_COVER_SOURCE)
+    try:
+        page = document.load_page(0)
+        pixmap = page.get_pixmap(matrix=fitz.Matrix(2.2, 2.2), alpha=False)
+        pixmap.save(str(COVER_PATH))
+    finally:
+        document.close()
+
+
+def stage_main_markdown() -> list[Path]:
+    staged_files: list[Path] = []
+    for filename in MAIN_FILE_ORDER:
+        source_path = MAIN_ROOT / filename
+        target_path = STAGING_ROOT / filename
+        target_path.write_text(normalize_markdown(source_path.read_text(encoding="utf-8")), encoding="utf-8")
+        staged_files.append(target_path)
+    return staged_files
+
+
+def build_epub(pandoc: str, staged_files: list[Path], log_lines: list[str]) -> None:
+    pandoc_command = [
+        pandoc,
+        "--from=markdown+footnotes+raw_html+fenced_divs",
+        "--to=epub3",
+        "--output",
+        str(RAW_EPUB),
+        "--css",
+        str(STYLE_PATH),
+        "--metadata-file",
+        str(METADATA_PATH),
+        "--epub-cover-image",
+        str(COVER_PATH),
+        "--epub-title-page=false",
+        "--toc",
+        "--toc-depth=2",
+        "--split-level=1",
+        "--standalone",
+    ] + [str(path) for path in staged_files]
+    run_command(pandoc_command, log_lines)
+
+
+def rewrite_epub_from_dir(source_dir: Path, output_path: Path) -> None:
+    with zipfile.ZipFile(output_path, "w") as archive:
+        mimetype_path = source_dir / "mimetype"
+        archive.write(mimetype_path, "mimetype", compress_type=zipfile.ZIP_STORED)
+        for path in sorted(source_dir.rglob("*")):
+            if path.is_dir() or path == mimetype_path:
+                continue
+            archive.write(path, path.relative_to(source_dir).as_posix(), compress_type=zipfile.ZIP_DEFLATED)
+
+
+def xhtml_tag(name: str) -> str:
+    return f"{{{XHTML_NS}}}{name}"
+
+
+def opf_tag(name: str) -> str:
+    return f"{{{OPF_NS}}}{name}"
+
+
+def discover_book_paths(root_dir: Path) -> tuple[Path, Path, Path]:
+    opf_candidates = list(root_dir.rglob("content.opf"))
+    if not opf_candidates:
+        raise FileNotFoundError("missing content.opf in extracted EPUB")
+    opf_path = opf_candidates[0]
+    epub_root = opf_path.parent
+    text_root = epub_root / "text"
+    if not text_root.exists():
+        raise FileNotFoundError("missing EPUB text directory")
+    return epub_root, opf_path, text_root
+
+
+def get_heading_text(root: ET.Element) -> str:
+    for tag_name in ("h1", "h2", "h3"):
+        heading = root.find(f".//xhtml:{tag_name}", NAMESPACES)
+        if heading is not None:
+            text = "".join(heading.itertext()).strip()
+            if text:
+                return text
+    raise ValueError("missing chapter heading")
+
+
+def replace_note_refs(root: ET.Element) -> None:
+    for anchor in root.findall(".//xhtml:a", NAMESPACES):
+        href = anchor.get("href", "")
+        ref_id = anchor.get("id", "")
+        footnote_match = re.fullmatch(r"#fn(\d+)", href)
+        ref_match = re.fullmatch(r"fnref(\d+)", ref_id)
+        if footnote_match:
+            note_number = footnote_match.group(1)
+            anchor.set("href", f"#note-{note_number}")
+            anchor.set("id", f"noteref-{note_number}")
+            anchor.set("class", "note-ref")
+            anchor.attrib.pop(f"{{{EPUB_NS}}}type", None)
+            anchor.attrib.pop("role", None)
+        elif ref_match:
+            note_number = ref_match.group(1)
+            anchor.set("id", f"noteref-{note_number}")
+            anchor.set("class", "note-ref")
+            anchor.attrib.pop(f"{{{EPUB_NS}}}type", None)
+            anchor.attrib.pop("role", None)
+
+
+def append_backlink(container: ET.Element, note_number: str) -> None:
+    backlink = ET.Element(
+        xhtml_tag("a"),
+        {"href": f"#noteref-{note_number}", "class": "note-backref"},
+    )
+    backlink.text = "↩"
+    paragraphs = [child for child in list(container) if child.tag == xhtml_tag("p")]
+    target = paragraphs[-1] if paragraphs else None
+    if target is None:
+        target = ET.SubElement(container, xhtml_tag("p"))
+    target.append(backlink)
+
+
+def replace_footnote_sections(root: ET.Element) -> None:
+    for section in root.findall(".//xhtml:section", NAMESPACES):
+        class_name = section.get("class", "")
+        if "footnotes" not in class_name.split():
+            continue
+
+        section.set("id", "chapter-notes")
+        section.set("class", "chapter-notes")
+        section.attrib.pop(f"{{{EPUB_NS}}}type", None)
+
+        children = list(section)
+        for child in children:
+            section.remove(child)
+
+        hr = ET.SubElement(section, xhtml_tag("hr"))
+        hr.tail = "\n"
+        heading = ET.SubElement(section, xhtml_tag("h2"), {"class": "notes-title"})
+        heading.text = "注释"
+        heading.tail = "\n"
+        note_list = ET.SubElement(section, xhtml_tag("ol"), {"class": "endnotes"})
+        note_list.tail = "\n"
+
+        for child in children:
+            if child.tag != xhtml_tag("aside"):
+                continue
+
+            note_id = child.get("id", "")
+            match = re.fullmatch(r"fn(\d+)", note_id)
+            if not match:
+                continue
+            note_number = match.group(1)
+            note_item = ET.SubElement(note_list, xhtml_tag("li"), {"id": f"note-{note_number}"})
+
+            moved = False
+            for grandchild in list(child):
+                child.remove(grandchild)
+                grandchild.attrib.pop(f"{{{EPUB_NS}}}type", None)
+                grandchild.attrib.pop("role", None)
+                for anchor in grandchild.findall(".//xhtml:a", NAMESPACES):
+                    if anchor.get("class") == "footnote-backref":
+                        anchor.set("href", f"#noteref-{note_number}")
+                        anchor.set("class", "note-backref")
+                        anchor.attrib.pop(f"{{{EPUB_NS}}}type", None)
+                        anchor.attrib.pop("role", None)
+                note_item.append(grandchild)
+                moved = True
+
+            if not moved:
+                paragraph = ET.SubElement(note_item, xhtml_tag("p"))
+                paragraph.text = (child.text or "").strip()
+
+            existing_backlink = note_item.find('.//xhtml:a[@class="note-backref"]', NAMESPACES)
+            if existing_backlink is None:
+                append_backlink(note_item, note_number)
+
+
+def rewrite_titlepage_document(root: ET.Element) -> None:
+    body = root.find("xhtml:body", NAMESPACES)
+    if body is None:
+        return
+
+    section = body.find("xhtml:section", NAMESPACES)
+    if section is None:
+        return
+
+    section.set(f"{{{EPUB_NS}}}type", "titlepage")
+    section.set("id", "titlepage")
+    heading = section.find("xhtml:h1", NAMESPACES)
+    if heading is not None:
+        heading.set("class", "tp-title")
+
+
+def set_body_semantics(root: ET.Element, chapter_name: str) -> None:
+    body = root.find("xhtml:body", NAMESPACES)
+    if body is None:
+        return
+    if chapter_name in {"ch001", "ch002", "ch003", "ch004"}:
+        body.set(f"{{{EPUB_NS}}}type", "frontmatter")
+    else:
+        body.set(f"{{{EPUB_NS}}}type", "bodymatter")
+
+
+def rewrite_chapter_documents(text_root: Path) -> None:
+    for xhtml_path in sorted(text_root.glob("ch*.xhtml")):
+        tree = ET.parse(xhtml_path)
+        root = tree.getroot()
+        chapter_name = xhtml_path.stem
+        title_text = "主权个人" if chapter_name == "ch001" else get_heading_text(root)
+
+        title_element = root.find("xhtml:head/xhtml:title", NAMESPACES)
+        if title_element is not None:
+            title_element.text = title_text
+
+        replace_note_refs(root)
+        replace_footnote_sections(root)
+        set_body_semantics(root, chapter_name)
+        if chapter_name == "ch001":
+            rewrite_titlepage_document(root)
+        tree.write(xhtml_path, encoding="utf-8", xml_declaration=True)
+
+
+def build_landmarks() -> ET.Element:
+    nav = ET.Element(
+        xhtml_tag("nav"),
+        {f"{{{EPUB_NS}}}type": "landmarks", "id": "landmarks", "role": "doc-landmarks"},
+    )
+    heading = ET.SubElement(nav, xhtml_tag("h2"))
+    heading.text = "位置"
+    ordered = ET.SubElement(nav, xhtml_tag("ol"))
+    items = [
+        ("text/cover.xhtml", "封面", "cover"),
+        ("text/ch001.xhtml", "书名页", "titlepage"),
+        ("text/ch002.xhtml", "版权页", "copyright-page"),
+        ("text/ch003.xhtml", "前言", "preface"),
+        ("text/ch005.xhtml", "正文", "bodymatter"),
+    ]
+    for href, label, landmark_type in items:
+        item = ET.SubElement(ordered, xhtml_tag("li"))
+        anchor = ET.SubElement(item, xhtml_tag("a"), {"href": href, f"{{{EPUB_NS}}}type": landmark_type})
+        anchor.text = label
+    return nav
+
+
+def rewrite_nav_document(nav_path: Path) -> None:
+    tree = ET.parse(nav_path)
+    root = tree.getroot()
+    toc_nav = root.find('.//xhtml:nav[@epub:type="toc"]', NAMESPACES)
+    if toc_nav is None:
+        raise ValueError("missing toc nav in nav.xhtml")
+
+    title_heading = toc_nav.find("xhtml:h1", NAMESPACES)
+    if title_heading is not None:
+        title_heading.text = "目录"
+
+    ordered = toc_nav.find("xhtml:ol", NAMESPACES)
+    if ordered is not None:
+        top_items = ordered.findall("xhtml:li", NAMESPACES)
+        if len(top_items) >= 1:
+            first_anchor = top_items[0].find("xhtml:a", NAMESPACES)
+            if first_anchor is not None:
+                first_anchor.text = "书名页"
+        if len(top_items) >= 2:
+            second_anchor = top_items[1].find("xhtml:a", NAMESPACES)
+            if second_anchor is not None:
+                second_anchor.text = "版权页"
+
+    for nav in root.findall('.//xhtml:nav[@epub:type="landmarks"]', NAMESPACES):
+        parent = root.find("xhtml:body", NAMESPACES)
+        if parent is not None:
+            parent.remove(nav)
+
+    body = root.find("xhtml:body", NAMESPACES)
+    if body is None:
+        raise ValueError("missing body in nav.xhtml")
+    body.append(build_landmarks())
+    tree.write(nav_path, encoding="utf-8", xml_declaration=True)
+
+
+def rewrite_ncx(ncx_path: Path) -> None:
+    tree = ET.parse(ncx_path)
+    root = tree.getroot()
+    nav_map = root.find("ncx:navMap", NAMESPACES)
+    if nav_map is None:
+        return
+    top_points = nav_map.findall("ncx:navPoint", NAMESPACES)
+    if len(top_points) >= 1:
+        first_text = top_points[0].find("ncx:navLabel/ncx:text", NAMESPACES)
+        if first_text is not None:
+            first_text.text = "书名页"
+    if len(top_points) >= 2:
+        second_text = top_points[1].find("ncx:navLabel/ncx:text", NAMESPACES)
+        if second_text is not None:
+            second_text.text = "版权页"
+    tree.write(ncx_path, encoding="utf-8", xml_declaration=True)
+
+
+def rewrite_package_document(opf_path: Path) -> tuple[list[str], str | None]:
+    tree = ET.parse(opf_path)
+    root = tree.getroot()
+    spine = root.find("opf:spine", NAMESPACES)
+    if spine is None:
+        raise ValueError("missing spine in content.opf")
+
+    removed_idrefs = {"cover_xhtml", "nav"}
+    kept_spine: list[str] = []
+    for itemref in list(spine):
+        idref = itemref.get("idref", "")
+        if idref in removed_idrefs:
+            spine.remove(itemref)
+            continue
+        kept_spine.append(idref)
+
+    guide = root.find("opf:guide", NAMESPACES)
+    if guide is None:
+        guide = ET.SubElement(root, opf_tag("guide"))
+    else:
+        for child in list(guide):
+            guide.remove(child)
+
+    guide_entries = [
+        ("cover", "封面", "text/cover.xhtml"),
+        ("toc", "目录", "nav.xhtml"),
+        ("title-page", "书名页", "text/ch001.xhtml"),
+        ("copyright-page", "版权页", "text/ch002.xhtml"),
+        ("text", "正文", "text/ch005.xhtml"),
+    ]
+    for entry_type, title, href in guide_entries:
+        ET.SubElement(guide, opf_tag("reference"), {"type": entry_type, "title": title, "href": href})
+
+    tree.write(opf_path, encoding="utf-8", xml_declaration=True)
+    first_linear = kept_spine[0] if kept_spine else None
+    return kept_spine, first_linear
+
+
+def postprocess_final_epub() -> dict[str, object]:
+    with zipfile.ZipFile(RAW_EPUB) as archive:
+        archive.extractall(RAW_UNPACKED_ROOT)
+
+    epub_root, opf_path, text_root = discover_book_paths(RAW_UNPACKED_ROOT)
+    rewrite_chapter_documents(text_root)
+    rewrite_nav_document(epub_root / "nav.xhtml")
+    ncx_path = epub_root / "toc.ncx"
+    if ncx_path.exists():
+        rewrite_ncx(ncx_path)
+    spine_items, first_linear = rewrite_package_document(opf_path)
+    rewrite_epub_from_dir(RAW_UNPACKED_ROOT, FINAL_EPUB)
+    return {"spine_items": spine_items, "first_linear": first_linear}
+
+
+def is_ascii_path(path: str) -> bool:
+    try:
+        path.encode("ascii")
+        return True
+    except UnicodeEncodeError:
+        return False
+
+
+def validate_source_texts() -> dict[str, list[str]]:
+    issues: list[str] = []
+    for file_path in MAIN_ROOT.glob("*.md"):
+        text = file_path.read_text(encoding="utf-8")
+        for pattern in FORBIDDEN_MAIN_PATTERNS:
+            if pattern in text:
+                issues.append(f"{file_path.name}: contains forbidden token `{pattern}`")
+    for file_path in [SUPPLEMENT_BOOK_PATH, NOTES_REMOVED_PATH]:
+        text = file_path.read_text(encoding="utf-8")
+        for pattern in FORBIDDEN_MAIN_PATTERNS:
+            if pattern in text:
+                issues.append(f"{file_path.name}: contains forbidden token `{pattern}`")
+    return {"issues": issues}
+
+
+def validate_epub() -> dict[str, object]:
+    issues: list[str] = []
+    nav_candidates: list[str] = []
+    title_mismatches: list[str] = []
+    spine_items: list[str] = []
+    first_linear: str | None = None
+    toc_labels: list[str] = []
+
+    with zipfile.ZipFile(FINAL_EPUB) as archive:
+        names = archive.namelist()
+        if "mimetype" not in names:
+            issues.append("missing mimetype")
+        if "META-INF/container.xml" not in names:
+            issues.append("missing META-INF/container.xml")
+
+        for name in names:
+            lower = name.lower()
+            if lower.endswith("nav.xhtml"):
+                nav_candidates.append(name)
+            if not is_ascii_path(name):
+                issues.append(f"non-ascii path: {name}")
+            if lower.endswith((".xhtml", ".html", ".css", ".opf", ".ncx")):
+                text = archive.read(name).decode("utf-8", errors="replace")
+                if "C:\\" in text or "file://" in text:
+                    issues.append(f"absolute path reference in {name}")
+                if re.search(r"\\(?:chapter|section|subsection|textbf|footnote|uline)\b", text):
+                    issues.append(f"LaTeX residue in {name}")
+                if name.startswith("EPUB/text/") and any(
+                    token in text
+                    for token in ["macin.org", "有点懵", "一个中国原则", "成功插入了小广告", "译者坚决支持"]
+                ):
+                    issues.append(f"forbidden main-text content leaked in {name}")
+
+        nav_name = nav_candidates[0] if nav_candidates else None
+        if nav_name:
+            nav_root = ET.fromstring(archive.read(nav_name))
+            toc_nav = nav_root.find('.//xhtml:nav[@epub:type="toc"]', NAMESPACES)
+            if toc_nav is None:
+                issues.append("missing toc nav")
+            else:
+                toc_labels = ["".join(anchor.itertext()).strip() for anchor in toc_nav.findall(".//xhtml:a", NAMESPACES)]
+                toc_links = [anchor.get("href", "") for anchor in toc_nav.findall(".//xhtml:a", NAMESPACES)]
+                if not any(link.startswith("text/ch001.xhtml") for link in toc_links):
+                    issues.append("title page missing from main toc")
+                if not any(link.startswith("text/ch002.xhtml") for link in toc_links):
+                    issues.append("imprint page missing from main toc")
+                if "附录一" not in toc_labels:
+                    issues.append("appendix one missing from main toc")
+                if "附录二" not in toc_labels:
+                    issues.append("appendix two missing from main toc")
+
+        opf_name = next((name for name in names if name.endswith("content.opf")), None)
+        if opf_name:
+            opf_root = ET.fromstring(archive.read(opf_name))
+            spine = opf_root.find("opf:spine", NAMESPACES)
+            if spine is None:
+                issues.append("missing spine in content.opf")
+            else:
+                spine_items = [itemref.get("idref", "") for itemref in spine.findall("opf:itemref", NAMESPACES)]
+                first_linear = spine_items[0] if spine_items else None
+                if "nav" in spine_items:
+                    issues.append("nav.xhtml still present in spine")
+                if "cover_xhtml" in spine_items:
+                    issues.append("cover page still present in spine")
+                if first_linear != "ch001_xhtml":
+                    issues.append(f"unexpected first linear chapter: {first_linear}")
+
+        for name in names:
+            if re.search(r"/text/ch\d+\.xhtml$", name):
+                root = ET.fromstring(archive.read(name))
+                title_element = root.find("xhtml:head/xhtml:title", NAMESPACES)
+                heading_text = "主权个人" if name.endswith("/text/ch001.xhtml") else get_heading_text(root)
+                title_text = (title_element.text or "").strip() if title_element is not None else ""
+                if title_text != heading_text:
+                    title_mismatches.append(name)
+
+    return {
+        "issues": issues,
+        "nav_candidates": nav_candidates,
+        "title_mismatches": title_mismatches,
+        "spine_items": spine_items,
+        "first_linear": first_linear,
+        "toc_labels": toc_labels,
+    }
+
+
+def write_report(source_validation: dict[str, list[str]], epub_validation: dict[str, object]) -> None:
+    lines = [
+        "# 修订版 EPUB 验证报告",
+        "",
+        f"- Final EPUB: `{FINAL_EPUB.relative_to(ROOT).as_posix()}`",
+        f"- Raw EPUB: `{RAW_EPUB.relative_to(ROOT).as_posix()}`",
+        f"- Cover asset: `{COVER_PATH.relative_to(ROOT).as_posix()}`",
+        "",
+        "## Source Checks",
+        "",
+    ]
+    if source_validation["issues"]:
+        lines.extend(f"- {issue}" for issue in source_validation["issues"])
+    else:
+        lines.append("- none")
+
+    lines.extend(
+        [
+            "",
+            "## EPUB Checks",
+            "",
+            f"- `nav.xhtml` candidates: {', '.join(epub_validation['nav_candidates']) if epub_validation['nav_candidates'] else 'none'}",
+            f"- First linear chapter: {epub_validation['first_linear'] or 'none'}",
+            f"- Spine items: {', '.join(epub_validation['spine_items']) if epub_validation['spine_items'] else 'none'}",
+            f"- TOC labels include appendices: {'附录一' in epub_validation['toc_labels'] and '附录二' in epub_validation['toc_labels']}",
+            f"- XHTML title mismatches: {len(epub_validation['title_mismatches'])}",
+            "",
+            "## Issues",
+            "",
+        ]
+    )
+    all_issues = source_validation["issues"] + list(epub_validation["issues"])
+    if all_issues:
+        lines.extend(f"- {issue}" for issue in all_issues)
+    else:
+        lines.append("- none")
+
+    REPORT_PATH.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
+def main() -> int:
+    log_lines: list[str] = []
+    try:
+        ensure_dirs()
+        write_static_sources()
+        archived_notes = write_main_sources()
+        write_supplements(archived_notes)
+        write_combined_sources()
+        write_review_docs()
+
+        pandoc = find_executable(
+            "pandoc",
+            [
+                Path.home() / "AppData/Local/Microsoft/WinGet/Links/pandoc.exe",
+                Path.home() / "AppData/Local/Microsoft/WinGet/Packages/JohnMacFarlane.Pandoc_Microsoft.Winget.Source_8wekyb3d8bbwe/pandoc-3.9.0.2/pandoc.exe",
+            ],
+        )
+
+        staged_files = stage_main_markdown()
+        render_cover()
+        build_epub(pandoc, staged_files, log_lines)
+        postprocess_final_epub()
+        source_validation = validate_source_texts()
+        epub_validation = validate_epub()
+        write_report(source_validation, epub_validation)
+        LOG_PATH.write_text("\n".join(log_lines) + "\n", encoding="utf-8")
+
+        print_status(f"Built: {FINAL_EPUB}")
+        print_status(f"Report: {REPORT_PATH}")
+        return 0 if not (source_validation["issues"] or epub_validation["issues"]) else 1
+    except Exception as exc:  # noqa: BLE001
+        log_lines.append(f"ERROR: {exc}")
+        REPORT_PATH.write_text(f"# 修订版 EPUB 验证报告\n\n- build failed: {exc}\n", encoding="utf-8")
+        LOG_PATH.write_text("\n".join(log_lines) + "\n", encoding="utf-8")
+        print_status(str(exc))
+        return 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())
