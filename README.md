@@ -4,7 +4,7 @@
 
 ## 下载
 
-- 直接下载最新版 EPUB：[主权个人.epub](https://github.com/iridite/sovereign-individual-cn-revised/releases/latest/download/%E4%B8%BB%E6%9D%83%E4%B8%AA%E4%BA%BA.epub)
+- 直接下载最新版 EPUB：[主权个人.epub](https://github.com/iridite/sovereign-individual-cn-revised/releases/latest/download/default.epub)
 
 ## 来源
 
