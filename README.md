@@ -2,6 +2,10 @@
 
 这是一个极简整理版仓库，目标只有一件事：保留《主权个人》中文版的**最终 Markdown 源**，并提供可复现的 EPUB 构建脚本。
 
+## 下载
+
+- 直接下载最新版 EPUB：[主权个人.epub](https://github.com/iridite/sovereign-individual-cn-revised/releases/latest/download/%E4%B8%BB%E6%9D%83%E4%B8%AA%E4%BA%BA.epub)
+
 ## 来源
 
 - 本仓库最初克隆自 [Macin20/sovereign-individual-cn](https://github.com/Macin20/sovereign-individual-cn)。
@@ -46,7 +50,7 @@ python .\build_epub.py
 
 生成结果默认输出到：
 
-- `dist/主权个人-修订版.epub`
+- `dist/主权个人.epub`
 - `dist/validation-report.md`
 
 构建过程中的中间文件会放到：
