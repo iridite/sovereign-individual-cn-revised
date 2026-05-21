@@ -587,10 +587,30 @@ FOOTNOTE_ACTIONS: dict[str, dict[str, dict[str, str]]] = {
         "02-preface2-fn-1": {"action": "remove", "reason": "宣传性个人网站链接，不纳入主书脚注。"},
     },
     "03-chapter1.md": {
+        "03-chapter1-fn-2": {
+            "action": "rewrite",
+            "reason": "压缩为必要人物说明，移除冗长生平细节。",
+            "replacement": "译注：埃斯库罗斯（Aeschylus）是古希腊悲剧诗人，常被称为“悲剧之父”。",
+        },
+        "03-chapter1-fn-4": {
+            "action": "rewrite",
+            "reason": "压缩为必要人物说明，移除冗长家世与财富细节。",
+            "replacement": "译注：乌萨马·本·拉登（Osama bin Laden）是“基地”组织创始人，后被普遍认定为“9·11”袭击主谋。",
+        },
         "03-chapter1-fn-5": {
             "action": "rewrite",
             "reason": "压缩为必要概念说明，移除冗长的现代延伸。",
             "replacement": "译注：“卢德分子”原指 19 世纪初英国反对机械化生产的工人；“新卢德主义”则借此概念批评技术扩张对社会与劳动的冲击。",
+        },
+        "03-chapter1-fn-7": {
+            "action": "rewrite",
+            "reason": "压缩为必要组织说明，移除冗长历史背景。",
+            "replacement": "译注：马耳他骑士团是历史悠久的天主教骑士团体，今天仍以准主权实体身份存在于国际社会。",
+        },
+        "03-chapter1-fn-9": {
+            "action": "rewrite",
+            "reason": "压缩为必要地名说明，移除冗长建筑史细节。",
+            "replacement": "译注：圣安杰洛城堡即罗马的天使城堡，长期兼具堡垒与教廷防御设施功能。",
         },
         "03-chapter1-fn-10": {
             "action": "rewrite",
@@ -606,6 +626,21 @@ FOOTNOTE_ACTIONS: dict[str, dict[str, dict[str, str]]] = {
             "action": "rewrite",
             "reason": "压缩为必要事件说明，移除过长细节。",
             "replacement": "译注：这里指 1995 年的俄克拉何马城爆炸案；在“9·11”之前，它被普遍视为美国本土最严重的恐怖袭击之一。",
+        },
+        "03-chapter1-fn-15": {
+            "action": "rewrite",
+            "reason": "压缩为必要人物说明，移除冗长履历。",
+            "replacement": "译注：威廉·普莱费尔（William Playfair）是苏格兰工程师与经济学家，也是统计图表的早期推广者。",
+        },
+        "03-chapter1-fn-16": {
+            "action": "rewrite",
+            "reason": "移除外链，压缩为必要作品说明。",
+            "replacement": "译注：这里指一部探讨国家由盛转衰机制的 19 世纪历史研究著作。",
+        },
+        "03-chapter1-fn-17": {
+            "action": "rewrite",
+            "reason": "移除裸链接，保留中性说明。",
+            "replacement": "译注：此处所引论文可在 JSTOR 检索到原文。",
         },
     },
     "06-chapter4.md": {
@@ -653,6 +688,16 @@ FOOTNOTE_ACTIONS: dict[str, dict[str, dict[str, str]]] = {
             "action": "rewrite",
             "reason": "压缩为必要城市背景说明，移除冗长统计细节。",
             "replacement": "译注：南本德（South Bend）是美国印第安纳州北部城市，曾是典型工业城市，后长期经历人口流失与产业转型。",
+        },
+        "10-chapter8-fn-3": {
+            "action": "rewrite",
+            "reason": "压缩为必要人物说明，移除冗长履历。",
+            "replacement": "译注：罗纳德·科斯（Ronald Coase）是新制度经济学的重要代表人物，以“科斯定理”著称。",
+        },
+        "10-chapter8-fn-4": {
+            "action": "rewrite",
+            "reason": "压缩为必要概念说明，移除冗长教科书式定义。",
+            "replacement": "译注：卡特尔（cartel）指企业通过协定限制竞争、操纵价格或产量的垄断联盟。",
         },
     },
     "11-chapter9.md": {
