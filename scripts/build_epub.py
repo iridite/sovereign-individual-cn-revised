@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 import re
 import shutil
@@ -8,7 +8,7 @@ import zipfile
 from pathlib import Path
 from xml.etree import ElementTree as ET
 
-ROOT = Path(__file__).resolve().parent
+ROOT = Path(__file__).resolve().parent.parent
 SOURCE_ROOT = ROOT / "source"
 MAIN_ROOT = SOURCE_ROOT
 OUTPUT_ROOT = ROOT / "dist"
