@@ -47,3 +47,6 @@ python .\scripts\build_epub.py
 
 - 英文原文、中文 PDF、以及其他对照材料统一放在 `reference/` 下，方便读者自行校对与复核（见 `reference/README.md`）。
 
+## 内容修改原则
+
+- 构建脚本不会对正文进行“自动替换/修补”。任何文本修改都应直接在 `source/` 下完成，并通过版本控制追踪。
