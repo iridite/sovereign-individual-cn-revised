@@ -1,16 +1,16 @@
 from __future__ import annotations
 
+import re
 import shutil
 import subprocess
-import sys
 import zipfile
 from pathlib import Path
 
 # Repo layout:
 # - source/: canonical book sources (do all text edits here)
 # - scripts/: build entrypoints
-# - dist/: outputs
-# - .work/: scratch
+# - dist/: outputs (ignored by git)
+# - .work/: scratch (ignored by git)
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 SOURCE_ROOT = REPO_ROOT / "source"
@@ -101,6 +101,61 @@ def validate_sources() -> list[str]:
     return issues
 
 
+def postprocess_footnote_backrefs(unpacked_root: Path) -> None:
+    """Add a back link in each footnote to return to its noteref anchor.
+
+    This function only rewrites generated XHTML under the unpacked EPUB. All
+    textual edits must happen in `source/`.
+    """
+
+    text_root = unpacked_root / "EPUB" / "text"
+    if not text_root.exists():
+        return
+
+    # pandoc emits:
+    # - noteref: <a href="#fn1" class="footnote-ref" id="fnref1" ...>1</a>
+    # - footnote: <aside ... id="fn1"> <p>...</p> </aside>
+    ref_re = re.compile(r'id="fnref(\d+)"')
+    aside_re = re.compile(
+        r'(<aside\b[^>]*\bid="fn(\d+)"[^>]*>)([\s\S]*?)(</aside>)',
+        re.IGNORECASE,
+    )
+
+    for xhtml_path in sorted(text_root.glob("ch*.xhtml")):
+        xhtml = xhtml_path.read_text(encoding="utf-8", errors="replace")
+        if 'class="footnote-ref"' not in xhtml or 'epub:type="footnotes"' not in xhtml:
+            continue
+
+        ref_nums = set(ref_re.findall(xhtml))
+        if not ref_nums:
+            continue
+
+        def rewrite_aside(match: re.Match[str]) -> str:
+            open_tag, num, body, close_tag = match.group(1), match.group(2), match.group(3), match.group(4)
+            if num not in ref_nums:
+                return match.group(0)
+
+            # Idempotent: don't duplicate if already present.
+            if f'href="#fnref{num}"' in body or "footnote-backref" in body:
+                return match.group(0)
+
+            # Use an HTML entity to avoid encoding/renderer issues.
+            backlink = f'<a href="#fnref{num}" class="footnote-backref" aria-label="Back to text">&#8617;</a>'
+
+            # Append backlink to the last paragraph inside the aside if present.
+            if "</p>" in body:
+                head, tail = body.rsplit("</p>", 1)
+                body = head + backlink + "</p>" + tail
+            else:
+                body = body + f"<p>{backlink}</p>"
+
+            return open_tag + body + close_tag
+
+        new_xhtml = aside_re.sub(rewrite_aside, xhtml)
+        if new_xhtml != xhtml:
+            xhtml_path.write_text(new_xhtml, encoding="utf-8")
+
+
 def build_epub(pandoc: str, log_lines: list[str]) -> None:
     DIST_ROOT.mkdir(parents=True, exist_ok=True)
     reset_dir(WORK_ROOT)
@@ -132,6 +187,9 @@ def build_epub(pandoc: str, log_lines: list[str]) -> None:
     reset_dir(unpack)
     with zipfile.ZipFile(RAW_EPUB, "r") as zf:
         zf.extractall(unpack)
+
+    # Enhance generated XHTML without touching canonical sources under `source/`.
+    postprocess_footnote_backrefs(unpack)
 
     mimetype_path = unpack / "mimetype"
     if not mimetype_path.exists():

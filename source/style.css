@@ -78,13 +78,15 @@ a {
   text-decoration: none;
 }
 
-a.note-ref {
+a.note-ref,
+a.footnote-ref {
   font-size: 0.78em;
   vertical-align: super;
   line-height: 1;
 }
 
-a.note-backref {
+a.note-backref,
+a.footnote-backref {
   margin-left: 0.35em;
   font-size: 0.9em;
 }
